@@ -1,0 +1,148 @@
+#
+# Compute the first 20 powers of 2.
+#
+
+method start<> void {
+
+$limstack = 3;
+$limlocal = 3;
+
+    # i = 0;
+
+    psh_b 0;
+    stl 0;
+
+    # power = 2;
+
+    psh_b 2;
+    stl 1;
+
+    # array = int64[20];
+    
+    psh_b 20;
+    par_q;
+    stl 2;
+
+@loop:
+
+    # while (i < 20) { ... }
+    
+    ldl 0;
+    psh_b 20;
+    cmp_q;
+    jmp_gez end;
+    
+    # array[i] = power;
+
+    ldl 1;  # Push value, then index, then array.
+    ldl 0;
+    ldl 2;
+    sai;
+
+    # power = power * 2;
+
+    ldl 1;
+    psh_b 2;
+    mul_q;
+    stl 1;
+
+    # i = i + 1;
+
+    ldl 0;
+    psh_b 1;
+    add_q;
+    stl 0;
+
+    jmp loop;
+
+@end:
+
+    # print(array);
+
+    ldl 2;
+    call echo_arr_q;
+    leave;
+}
+
+method echo_arr_len<*Q> void {
+
+$limstack = 10;
+$limlocal = 10;
+
+    ldsc "Array length is: ";
+    call csm_io_print_strconst;
+    ldl 0;
+    alen;
+    call csm_io_print_q;
+    psh_b 10;
+    call csm_io_print_b_ascii;
+    leave;
+}
+
+method echo_arr_q<*Q> void {
+
+$limstack = 5;
+$limlocal = 5;
+
+    psh_d 0;
+    stl 1;
+
+    ldl 0;
+    call echo_arr_len;
+
+    ldsc "[";
+    call csm_io_print_strconst;
+
+    # if (len(array) == 0) goto end;
+    ldl 0;
+    alen;
+    
+    jmp_eqz end;
+
+@loop:
+
+    ldl 0;
+    alen;
+    psh_b 1;
+    sub_q;
+
+    ldl 1;
+    sub_q;
+
+    # if ((len(array) - 1) - counter <= 0) goto end;
+    jmp_lez end;
+
+    ldl 1;
+    ldl 0;
+    lai;
+    call csm_io_print_q;
+    ldsc ", ";
+    call csm_io_print_strconst;
+
+    # counter += 1;
+    ldl 1;
+    psh_b 1;
+    add_q;
+    stl 1;
+
+    jmp loop; 
+
+    ldl 0;
+    dup;
+    alen;
+    psh_b 1;
+    sub_q;
+    lai;
+    call csm_io_print_q;
+
+@end:
+
+    ldsc "]";
+    call csm_io_print_strconst;
+
+    psh_b 10;
+    call csm_io_print_b_ascii;
+   
+    leave;
+}
+

@@ -1,0 +1,19 @@
+#
+# Trigger a bad array load.
+#
+
+method start<> void {
+
+$limstack = 2;
+$limlocal = 1;
+
+    psh_b 10;
+    par_q;
+    stl 0;
+
+    psh_b 21;
+    ldl 0;
+    lai;
+
+    leave;
+}

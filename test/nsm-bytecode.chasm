@@ -1,0 +1,13 @@
+#
+# Trigger a "no such method" runtime error for a bytecode method.
+#
+
+method start<> void {
+
+$limstack = 0;
+$limlocal = 0;
+
+    call no_such_bytecode_method;
+    leave;
+    
+}

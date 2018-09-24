@@ -1,0 +1,28 @@
+#
+# Call a method that takes two integers and adds them together, and then print
+# the result to the terminal.
+#
+
+method start<> void {
+
+$limstack = 2;
+$limlocal = 0;
+
+    psh_d 32;
+    dup;
+    call add2;
+    call csm_io_print_d;
+    leave;
+
+}
+
+method add2<D,D> D {
+
+$limstack = 2;
+$limlocal = 2;
+
+    ldl 0;
+    ldl 1;
+    add_q;
+    ret;
+}

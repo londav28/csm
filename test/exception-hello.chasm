@@ -1,0 +1,29 @@
+#
+# Print a message to the console via an exception handler.
+#
+
+object HelloException {
+    D
+}
+
+method start<> void {
+
+$limstack = 10;
+$limlocal = 10;
+
+    psh_a HelloException;
+    dup;
+    psh_b 0;
+    sfd 0;
+    
+try {
+   throw;
+} except HelloException {
+    ldsc "Hello world from exception handler!";
+    call csm_io_print_strconst;
+    psh_b 10;
+    call csm_io_print_b_ascii;
+}
+
+    leave;
+}

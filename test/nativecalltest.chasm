@@ -1,0 +1,14 @@
+#
+# As with "hello10.chasm", but tests the native function bridge code without
+# passing arguments.
+#
+
+method start<> void {
+
+$limstack = 0;
+$limlocal = 0;
+
+    call __io_print_test;
+    leave;
+    
+}

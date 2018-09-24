@@ -1,0 +1,20 @@
+#
+# Test an array load.
+#
+
+method start<> void {
+
+$limstack = 10;
+$limlocal = 10;
+
+    psh_b 10;
+    par_q;
+    alen;
+    call csm_io_print_q;
+
+    psh_b 10;
+    call csm_io_print_b_ascii;
+
+    leave;
+}
+

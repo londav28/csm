@@ -1,0 +1,13 @@
+#
+# Print "Hello world!" to the console.
+#
+
+method start<> void {
+
+$limstack = 1;
+$limlocal = 0;
+    
+    ldsc "Hello world!";
+    call csm_io_print_strconst;
+    leave;
+}

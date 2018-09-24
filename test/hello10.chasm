@@ -1,0 +1,47 @@
+# 
+# Print the phrase "Hello world!" to the console 10 times.
+#
+
+method start<> void {
+
+$limstack = 2;
+$limlocal = 1;
+ 
+    psh_b 0;
+    stl 0;
+
+@loop:
+
+    ldl 0;
+    psh_b 10;
+    cmp_q;
+    jmp_eqz end;
+    ldl 0;
+    psh_b 1;
+    add_q;
+    stl 0;
+    ldsc "Hello world!";
+    call csm_io_print_strconst;
+    call echo_endl;
+    jmp loop;
+
+@end:
+
+    ldsc "Displaying GC stats following execution:";
+    call csm_io_print_strconst;
+    call echo_endl;
+    call csm_mem_gc_stats;
+
+    leave;
+}
+
+method echo_endl<> void {
+
+$limstack = 1;
+$limlocal = 0;
+
+    psh_b 10;
+    call csm_io_print_b_ascii;
+    leave;
+}
+

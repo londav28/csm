@@ -1,0 +1,22 @@
+#
+# Trigger a bad array store.
+#
+
+method start<> void {
+
+$limstack = 3;
+$limlocal = 1;
+
+    psh_b 10;
+    par_q;
+    stl 0;
+
+    # array[21] = 127;
+    
+    psh_b 127;
+    psh_b 21;
+    ldl 0;
+    sai;
+
+    leave;
+}

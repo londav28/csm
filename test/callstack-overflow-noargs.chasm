@@ -1,0 +1,25 @@
+#
+# Trigger a callstack overflow recursively calling a  method that takes no
+# arguments.
+#
+
+method start<> void {
+
+$limstack = 0;
+$limlocal = 0;
+    
+    call looparound;
+    leave;
+}
+
+
+method looparound<> void {
+
+$limstack = 1;
+$limlocal = 0;
+
+    ldsc "In loop!";
+    call __io_print_strconst;
+    call looparound;
+    leave;
+}
