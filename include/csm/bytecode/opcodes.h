@@ -7,7 +7,7 @@ extern "C" {
 
 #include "csm/types.h"
 
-typedef enum {
+typedef enum csm_opcode {
 
     CSM_OP_NOP = 0,
     CSM_OP_LDL,
@@ -73,7 +73,7 @@ typedef enum {
     CSM_OP_BREAK,
     CSM_OP_THROW
 
-};
+} csm_opcode;
 
 /* Possible widths of instruction immediates (in bytes). */
 #define CSM_OP_IMD_WIDTH_0          0
