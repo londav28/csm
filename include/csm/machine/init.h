@@ -8,11 +8,11 @@ extern "C" {
 #include "csm/types.h"
 #include "csm/machine/state.h"
 
-typedef struct {
+typedef struct csm_init_profile {
 
-    uint32_t datastack_limit;
-    uint32_t callstack_limit;
-    uint8_t gc_latency_level;
+    csm_u32 datastack_limit;
+    csm_u32 callstack_limit;
+    csm_u8 gc_latency_level;
 
 } csm_init_profile;
 

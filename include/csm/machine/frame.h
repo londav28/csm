@@ -1,30 +1,12 @@
-#ifndef CSM_MACHINE_FRAME_H_
-#define CSM_MACHINE_FRAME_H_
+#ifndef CSM_INCLUDE_CSM_MACHINE_FRAME_H_
+#define CSM_INCLUDE_CSM_MACHINE_FRAME_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-
 #include "csm/bytecode/opcodes.h"
 #include <assert.h>
-
-
-/**
- * BIG TODO:
- * 
- * We need to provide separate datastack manip macros for when you are using
- * typed cells vs untyped.
- * 
- * We'll also need a separate set of stack frames (say "typed/untyped"),
- * either that or we can union them? Not sure.
- * 
- * IE, any of the dynamic handler sets make use of the typed datastack, but
- * the unsafe stack makes use of stack frames instead (absolutely no type
- * information is preserved).
- * 
- */
-
 
 /* Pointer to current top of stack. */
 #define CSM_DATASTACK_POS(t) (t->datastack_pos)
@@ -126,9 +108,7 @@ extern "C" {
 
 #define CSM_CUR_STREAM_F64(t) csm_stream_f64(CSM_CUR_STREAM(t))
 
-
 #ifdef __cplusplus
 }
 #endif
-
 #endif

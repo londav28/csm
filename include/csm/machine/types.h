@@ -1,14 +1,11 @@
-#ifndef CSM_MACHINE_TYPES_H_
-#define CSM_MACHINE_TYPES_H_
+#ifndef CSM_INCLUDE_CSM_MACHINE_TYPES_H_
+#define CSM_INCLUDE_CSM_MACHINE_TYPES_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-
 /* Might just move this header over to the "machine/state.h" header. */
-
-
 #define CSM_TYPE_NONE                   0
 #define CSM_TYPE_INTEGER_8              1
 #define CSM_TYPE_INTEGER_16             2
@@ -25,7 +22,6 @@ extern "C" {
 #define CSM_TYPE_ARRAY_I64              13
 #define CSM_TYPE_ARRAY_F64              14
 #define CSM_TYPE_ARRAY_OBJ              15
-
 
 #ifdef __cplusplus
 }
