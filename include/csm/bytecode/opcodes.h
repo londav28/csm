@@ -1,19 +1,13 @@
-#ifndef CSM_BYTECODE_OPCODES_H_
-#define CSM_BYTECODE_OPCODES_H_
+#ifndef CSM_INCLUDE_CSM_BYTECODE_OPCODES_H_
+#define CSM_INCLUDE_CSM_BYTECODE_OPCODES_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-
 #include "csm/types.h"
 
-
-/** __________________________________________________________________________
- * OPCODES
- */
-
-enum csm_op {
+typedef enum {
 
     CSM_OP_NOP = 0,
     CSM_OP_LDL,
@@ -78,14 +72,8 @@ enum csm_op {
     CSM_OP_LEAVE,
     CSM_OP_BREAK,
     CSM_OP_THROW
-    
+
 };
-
-
-/** __________________________________________________________________________
- * WIDTHS
- */
-
 
 /* Possible widths of instruction immediates (in bytes). */
 #define CSM_OP_IMD_WIDTH_0          0
@@ -94,67 +82,33 @@ enum csm_op {
 #define CSM_OP_IMD_WIDTH_4          4
 #define CSM_OP_IMD_WIDTH_8          8
 
+const char *csm_op_mnemonic(csm_u8 op);
 
-/** __________________________________________________________________________
- * METHODS
- */
+int csm_op_is_jump(csm_u8 op);
 
+int csm_op_imd_u8(csm_u8 op);
 
-const char *
-csm_op_mnemonic(uint8_t op);
+int csm_op_imd_u16(csm_u8 op);
 
+int csm_op_imd_u32(csm_u8 op);
 
-int
-csm_op_is_jump(uint8_t op);
+int csm_op_imd_u64(csm_u8 op);
 
+int csm_op_imd_i8(csm_u8 op);
 
-int
-csm_op_imd_u8(uint8_t op);
+int csm_op_imd_i16(csm_u8 op);
 
+int csm_op_imd_i32(csm_u8 op);
 
-int
-csm_op_imd_u16(uint8_t op);
+int csm_op_imd_i64(csm_u8 op);
 
+int csm_op_imd_f32(csm_u8 op);
 
-int
-csm_op_imd_u32(uint8_t op);
+int csm_op_imd_f64(csm_u8 op);
 
-
-int
-csm_op_imd_u64(uint8_t op);
-
-
-int
-csm_op_imd_i8(uint8_t op);
-
-
-int
-csm_op_imd_i16(uint8_t op);
-
-
-int
-csm_op_imd_i32(uint8_t op);
-
-
-int
-csm_op_imd_i64(uint8_t op);
-
-
-int
-csm_op_imd_f32(uint8_t op);
-
-
-int
-csm_op_imd_f64(uint8_t op);
-
-
-uint8_t
-csm_op_imd_width(uint8_t op);
-
-
+csm_u8 csm_op_imd_width(csm_u8 op);
 
 #ifdef __cplusplus
 }
 #endif
-
 #endif

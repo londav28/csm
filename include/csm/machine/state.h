@@ -1,5 +1,5 @@
-#ifndef CSM_MACHINE_STATE_H_
-#define CSM_MACHINE_STATE_H_
+#ifndef CSM_INCLUDE_CSM_MACHINE_STATE_H_
+#define CSM_INCLUDE_CSM_MACHINE_STATE_H_
 
 #ifdef __cplusplus
 extern "C" {

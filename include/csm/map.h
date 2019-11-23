@@ -18,7 +18,7 @@ typedef uint64_t (*csm_hash)(void *data);
 typedef int (*csm_equals)(void *one, void *two);
 
 
-struct csm_map *
+struct csm_map*
 csm_map_create(csm_hash hash, csm_equals equals);
 
 

@@ -1,21 +1,16 @@
-#ifndef CSM_START_H_
-#define CSM_START_H_
+#ifndef CSM_INCLUDE_CSM_MACHINE_START_H_
+#define CSM_INCLUDE_CSM_MACHINE_START_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#include "csm/bytecode/format.h"
+#include "csm/machine/state.h"
 
-struct csm_bc_module;
-struct csm_machine;
-
-
-int
-csm_start_basic(struct csm_machine *m, struct csm_bc_module *mod);
-
+int csm_start_basic(csm_machine *m, csm_bc_module *mod);
 
 #ifdef __cplusplus
 }
 #endif
-
 #endif
