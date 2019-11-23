@@ -8,7 +8,7 @@ extern "C" {
 #include "csm/types.h"
 
 /* This is the endianness of the file, not of your system! */
-typedef enum {
+typedef enum csm_wstream_mode {
 
     CSM_WSTREAM_MODE_LE = 0,
     CSM_WSTREAM_MODE_BE
@@ -16,7 +16,7 @@ typedef enum {
 } csm_wstream_mode;
 
 /* Same exact interface as "csm_stream", just in 64 bits. */
-typedef struct {
+typedef struct csm_wstream {
     
     void* buf;
     csm_u64 size;
@@ -39,7 +39,7 @@ csm_u64 csm_wstream_get_pos(csm_wstream* s);
 
 int csm_wstream_get_mode(csm_wstream* s);
 
-int csm_wstream_lt(csm_wstream* s, uint64_t bytes);
+int csm_wstream_lt(csm_wstream* s, csm_u64 bytes);
 
 /* Returns true if the stream would go out-of-bounds. */
 int csm_wstream_check_rel(csm_wstream* s, csm_i64 adjust);

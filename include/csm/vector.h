@@ -7,7 +7,7 @@ extern "C" {
 
 #include "csm/types.h"
 
-typedef struct {
+typedef struct csm_vector {
 
     int dummy;
 

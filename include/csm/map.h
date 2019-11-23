@@ -9,7 +9,7 @@ extern "C" {
 
 struct csm_map_node_;
 
-typedef struct {
+typedef struct csm_map {
 
     struct csm_map_node_ **table;
     size_t tablesize;

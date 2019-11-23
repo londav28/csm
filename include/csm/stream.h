@@ -8,14 +8,14 @@ extern "C" {
 #include "csm/types.h"
 
 /* This is the endianness of the file, not of your system! */
-typedef enum {
+typedef enum csm_stream_mode {
 
     CSM_STREAM_MODE_LE = 0,
     CSM_STREAM_MODE_BE
 
 } csm_stream_mode;
 
-typedef struct {
+typedef struct csm_stream {
     
     void* buf;
     csm_u32 size;
@@ -24,7 +24,7 @@ typedef struct {
 
 } csm_stream;
 
-void csm_stream_init(csm_stream* s, void *data, uint32_t size, int fe);
+void csm_stream_init(csm_stream* s, void *data, csm_u32 size, int fe);
 
 void csm_stream_restart(csm_stream* s);
 
