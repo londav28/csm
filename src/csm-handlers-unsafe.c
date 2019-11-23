@@ -14,8 +14,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
-// TODO: Macro assumes struct field name containing union?
 #define CSM_BINARY_OP(op, awidth, rwidth, thread)                           \
     do {                                                                    \
         struct csm_cell a, b, v;                                            \
@@ -33,7 +31,6 @@
         CSM_DATASTACK_PUSH(thread, v);                                      \
     } while (0)
 
-// TODO: Can we unparameterize this a little bit?
 #define CSM_THREEWAY_COMPARISON_OP(awidth, thread)                          \
     do {                                                                    \
         struct csm_cell a, b, v;                                            \
@@ -52,7 +49,7 @@
 #define CSM_COMPARE_ZERO_JUMP_OP(cmp, thread)                               \
     do {                                                                    \
         struct csm_cell v;                                                  \
-        uint32_t j;                                                         \
+        csm_u32 j;                                                          \
         v = CSM_DATASTACK_POP(thread);                                      \
         j = CSM_CUR_STREAM_U32(thread);                                     \
         if (v.as.i64 cmp 0) {                                               \
@@ -67,14 +64,13 @@
         CSM_DATASTACK_PUSH(thread, v);                                      \
     } while (0)
 
-
 /* TODO: Bytes calculation can overflow. */
 /* TODO: Load and store exceptions could mention array kind. */
 #define CSM_PUSH_ARRAY_OP(ctype, what, thread)                              \
     do {                                                                    \
         struct csm_array_header* array = NULL;                              \
         struct csm_cell v;                                                  \
-        int64_t length = 0;                                                 \
+        csm_i64 length = 0;                                                 \
         size_t stride = 0;                                                  \
         size_t bytes = 0;                                                   \
         struct csm_gc_header hdr;                                           \
@@ -107,24 +103,21 @@
         CSM_DATASTACK_PUSH(thread, v);                                      \
     } while (0)
 
-
 /* Need this so that bytecode can decode the next op. */
 csm_handler csm_handlers_unsafe[];
 
 /* Just for convenience! */
 csm_handler* hds = csm_handlers_unsafe;
 
-
 static struct csm_unpacked_op op_nop(struct csm_thread* t)
 {
     CSM_DECODE_RETURN(t, hds);
 }
 
-
 static struct csm_unpacked_op op_ldl(struct csm_thread* t)
 {
     struct csm_cell value;
-    uint8_t idx = 0;
+    csm_u8 idx = 0;
 
     idx = CSM_CUR_STREAM_U8(t);
     value = CSM_CUR_FRAME_LOCALS(t)[idx];
@@ -132,11 +125,10 @@ static struct csm_unpacked_op op_ldl(struct csm_thread* t)
     CSM_DECODE_RETURN(t, hds);
 }
 
-
 static struct csm_unpacked_op op_stl(struct csm_thread* t)
 {
     struct csm_cell value;
-    uint8_t idx = 0;
+    csm_u8 idx = 0;
 
     idx = CSM_CUR_STREAM_U8(t);
     value = CSM_DATASTACK_POP(t);
@@ -144,11 +136,10 @@ static struct csm_unpacked_op op_stl(struct csm_thread* t)
     CSM_DECODE_RETURN(t, hds);
 }
 
-
 static struct csm_unpacked_op op_ldg(struct csm_thread* t)
 {
     struct csm_cell value;
-    uint16_t idx = 0;
+    csm_u8 idx = 0;
 
     idx = CSM_CUR_STREAM_U16(t);
     value = CSM_GLOBALS(t)[idx];
@@ -156,11 +147,10 @@ static struct csm_unpacked_op op_ldg(struct csm_thread* t)
     CSM_DECODE_RETURN(t, hds);
 }
 
-
 static struct csm_unpacked_op op_stg(struct csm_thread* t)
 {
     struct csm_cell value;
-    uint16_t idx = 0;
+    csm_u8 idx = 0;
 
     idx = CSM_CUR_STREAM_U16(t);
     value = CSM_DATASTACK_POP(t);
@@ -168,12 +158,11 @@ static struct csm_unpacked_op op_stg(struct csm_thread* t)
     CSM_DECODE_RETURN(t, hds);
 }
 
-
 static struct csm_unpacked_op op_lfd(struct csm_thread* t)
 {
     struct csm_cell *object = NULL;
     struct csm_cell value;
-    uint16_t idx = 0;
+    csm_u8 idx = 0;
 
     idx = CSM_CUR_STREAM_U16(t);
     object = CSM_DATASTACK_POP(t).as.raw;
@@ -182,12 +171,11 @@ static struct csm_unpacked_op op_lfd(struct csm_thread* t)
     CSM_DECODE_RETURN(t, hds);
 }
 
-
 static struct csm_unpacked_op op_sfd(struct csm_thread* t)
 {
     struct csm_cell *object = NULL;
     struct csm_cell value;
-    uint16_t idx = 0;
+    csm_u8 idx = 0;
 
     idx = CSM_CUR_STREAM_U16(t);
     value = CSM_DATASTACK_POP(t);
@@ -195,7 +183,6 @@ static struct csm_unpacked_op op_sfd(struct csm_thread* t)
     object[idx] = value;
     CSM_DECODE_RETURN(t, hds);
 }
-
 
 static struct csm_unpacked_op op_ldsc(struct csm_thread* t)
 {
@@ -206,7 +193,6 @@ static struct csm_unpacked_op op_ldsc(struct csm_thread* t)
     CSM_DECODE_RETURN(t, hds);
 }
 
-
 static struct csm_unpacked_op op_pop(struct csm_thread* t)
 {
     struct csm_cell unused;
@@ -215,7 +201,6 @@ static struct csm_unpacked_op op_pop(struct csm_thread* t)
     (void) unused;
     CSM_DECODE_RETURN(t, hds);
 }
-
 
 static struct csm_unpacked_op op_swp(struct csm_thread* t)
 {
@@ -228,7 +213,6 @@ static struct csm_unpacked_op op_swp(struct csm_thread* t)
     CSM_DECODE_RETURN(t, hds);
 }
 
-
 static struct csm_unpacked_op op_dup(struct csm_thread* t)
 {
     struct csm_cell v;
@@ -239,13 +223,11 @@ static struct csm_unpacked_op op_dup(struct csm_thread* t)
     CSM_DECODE_RETURN(t, hds);
 }
 
-
 static struct csm_unpacked_op op_psh_i8(struct csm_thread* t)
 {
     CSM_PUSH_OP(i64, CSM_CUR_STREAM_I8, t);
     CSM_DECODE_RETURN(t, hds);
 }
-
 
 static struct csm_unpacked_op op_psh_i16(struct csm_thread* t)
 {
@@ -253,13 +235,11 @@ static struct csm_unpacked_op op_psh_i16(struct csm_thread* t)
     CSM_DECODE_RETURN(t, hds);
 }
 
-
 static struct csm_unpacked_op op_psh_i32(struct csm_thread* t)
 {
     CSM_PUSH_OP(i64, CSM_CUR_STREAM_I32, t);
     CSM_DECODE_RETURN(t, hds);
 }
-
 
 static struct csm_unpacked_op op_psh_i64(struct csm_thread* t)
 {
@@ -267,25 +247,22 @@ static struct csm_unpacked_op op_psh_i64(struct csm_thread* t)
     CSM_DECODE_RETURN(t, hds);
 }
 
-
 static struct csm_unpacked_op op_psh_f64(struct csm_thread* t)
 {
     CSM_PUSH_OP(f64, CSM_CUR_STREAM_F64, t);
     CSM_DECODE_RETURN(t, hds);
 }
 
-
 /* TODO: Plan logic for object allocation! */
 static struct csm_unpacked_op op_psh_obj(struct csm_thread* t)
 {
-    uint32_t idx = 0;
+    csm_u32 idx = 0;
 
     idx = CSM_CUR_STREAM_U32(t);
     (void) idx;
 
     CSM_DECODE_RETURN(t, hds);
 }
-
 
 static struct csm_unpacked_op op_psh_nil(struct csm_thread* t)
 {
@@ -296,41 +273,35 @@ static struct csm_unpacked_op op_psh_nil(struct csm_thread* t)
     CSM_DECODE_RETURN(t, hds);
 }
 
-
 static struct csm_unpacked_op op_par_i8(struct csm_thread* t)
 {
-    CSM_PUSH_ARRAY_OP(int8_t, CSM_ARRAY_TYPE_I8, t);
+    CSM_PUSH_ARRAY_OP(csm_i8, CSM_ARRAY_TYPE_I8, t);
     CSM_DECODE_RETURN(t, hds);
 }
-
 
 static struct csm_unpacked_op op_par_i16(struct csm_thread* t)
 {
-    CSM_PUSH_ARRAY_OP(int16_t, CSM_ARRAY_TYPE_I16, t);
+    CSM_PUSH_ARRAY_OP(csm_i16, CSM_ARRAY_TYPE_I16, t);
     CSM_DECODE_RETURN(t, hds);
 }
-
 
 static struct csm_unpacked_op op_par_i32(struct csm_thread* t)
 {
-    CSM_PUSH_ARRAY_OP(int32_t, CSM_ARRAY_TYPE_I32, t);
+    CSM_PUSH_ARRAY_OP(csm_i32, CSM_ARRAY_TYPE_I32, t);
     CSM_DECODE_RETURN(t, hds);
 }
-
 
 static struct csm_unpacked_op op_par_i64(struct csm_thread* t)
 {
-    CSM_PUSH_ARRAY_OP(int64_t, CSM_ARRAY_TYPE_I64, t);
+    CSM_PUSH_ARRAY_OP(csm_i64, CSM_ARRAY_TYPE_I64, t);
     CSM_DECODE_RETURN(t, hds);
 }
-
 
 static struct csm_unpacked_op op_par_f64(struct csm_thread* t)
 {
-    CSM_PUSH_ARRAY_OP(double, CSM_ARRAY_TYPE_F64, t);
+    CSM_PUSH_ARRAY_OP(csm_f64, CSM_ARRAY_TYPE_F64, t);
     CSM_DECODE_RETURN(t, hds);
 }
-
 
 static struct csm_unpacked_op op_par_obj(struct csm_thread* t)
 {
@@ -338,12 +309,11 @@ static struct csm_unpacked_op op_par_obj(struct csm_thread* t)
     CSM_DECODE_RETURN(t, hds);
 }
 
-
 static struct csm_unpacked_op op_lai(struct csm_thread* t)
 {
     struct csm_array_header* hdr = NULL;
     struct csm_cell val;
-    int64_t idx = 0;
+    csm_i64 idx = 0;
 
     hdr = CSM_DATASTACK_POP(t).as.raw;
     idx = CSM_DATASTACK_POP(t).as.i64;
@@ -359,19 +329,19 @@ static struct csm_unpacked_op op_lai(struct csm_thread* t)
     /* From memcpy to a more blocky switch. Better or worse? */
     switch(hdr->kind) {
     case CSM_ARRAY_TYPE_I8:
-        val.as.i64 = ((int8_t*) hdr->data)[idx];
+        val.as.i64 = ((csm_i8*) hdr->data)[idx];
         break;
     case CSM_ARRAY_TYPE_I16:
-        val.as.i64 = ((int16_t*) hdr->data)[idx];
+        val.as.i64 = ((csm_i16*) hdr->data)[idx];
         break;
     case CSM_ARRAY_TYPE_I32:
-        val.as.i64 = ((int32_t*) hdr->data)[idx];
+        val.as.i64 = ((csm_i32*) hdr->data)[idx];
         break;
     case CSM_ARRAY_TYPE_I64:
-        val.as.i64 = ((int64_t*) hdr->data)[idx];
+        val.as.i64 = ((csm_i64*) hdr->data)[idx];
         break;
     case CSM_ARRAY_TYPE_F64:
-        val.as.f64 = ((double*) hdr->data)[idx];
+        val.as.f64 = ((csm_f64*) hdr->data)[idx];
         break;
     case CSM_ARRAY_TYPE_OBJ:
         val.as.raw = ((void**) hdr->data)[idx];
@@ -385,13 +355,12 @@ static struct csm_unpacked_op op_lai(struct csm_thread* t)
     CSM_DECODE_RETURN(t, hds);
 }
 
-
 static struct csm_unpacked_op op_sai(struct csm_thread* t)
 {
-    // Pop items (even if unused) to preserve stack height.
+    /* Pop items (even if unused) to preserve stack height. */
     struct csm_array_header* hdr = NULL;
     struct csm_cell val;
-    int64_t idx = 0;
+    csm_i64 idx = 0;
 
     hdr = CSM_DATASTACK_POP(t).as.raw;
     idx = CSM_DATASTACK_POP(t).as.i64;
@@ -408,19 +377,19 @@ static struct csm_unpacked_op op_sai(struct csm_thread* t)
     /* From memcpy to a more blocky switch. Better or worse? */
     switch(hdr->kind) {
     case CSM_ARRAY_TYPE_I8:
-        ((int8_t*) hdr->data)[idx] = val.as.i8;
+        ((csm_i8*) hdr->data)[idx] = val.as.i8;
         break;
     case CSM_ARRAY_TYPE_I16:
-        ((int16_t*) hdr->data)[idx] = val.as.i16;
+        ((csm_i16*) hdr->data)[idx] = val.as.i16;
         break;
     case CSM_ARRAY_TYPE_I32:
-        ((int32_t*) hdr->data)[idx] = val.as.i32;
+        ((csm_i32*) hdr->data)[idx] = val.as.i32;
         break;
     case CSM_ARRAY_TYPE_I64:
-        ((int64_t*) hdr->data)[idx] = val.as.i64;
+        ((csm_i64*) hdr->data)[idx] = val.as.i64;
         break;
     case CSM_ARRAY_TYPE_F64:
-        ((double*) hdr->data)[idx] = val.as.f64;
+        ((csm_f64*) hdr->data)[idx] = val.as.f64;
         break;
     case CSM_ARRAY_TYPE_OBJ:
         ((void**) hdr->data)[idx] = val.as.raw;
@@ -433,8 +402,6 @@ static struct csm_unpacked_op op_sai(struct csm_thread* t)
     CSM_DECODE_RETURN(t, hds);
 }
 
-
-// TODO: Wait until GC interface and object model for this.
 static struct csm_unpacked_op op_alen(struct csm_thread* t)
 {
     struct csm_array_header* header = NULL;
@@ -449,13 +416,11 @@ static struct csm_unpacked_op op_alen(struct csm_thread* t)
     CSM_DECODE_RETURN(t, hds);
 }
 
-
 static struct csm_unpacked_op op_and(struct csm_thread* t)
 {
     CSM_BINARY_OP(&, i64, i64, t);
     CSM_DECODE_RETURN(t, hds);
 }
-
 
 static struct csm_unpacked_op op_or(struct csm_thread* t)
 {
@@ -463,13 +428,11 @@ static struct csm_unpacked_op op_or(struct csm_thread* t)
     CSM_DECODE_RETURN(t, hds);
 }
 
-
 static struct csm_unpacked_op op_xor(struct csm_thread* t)
 {
     CSM_BINARY_OP(^, i64, i64, t);
     CSM_DECODE_RETURN(t, hds);
 }
-
 
 static struct csm_unpacked_op op_not(struct csm_thread* t)
 {
@@ -477,13 +440,11 @@ static struct csm_unpacked_op op_not(struct csm_thread* t)
     CSM_DECODE_RETURN(t, hds);
 }
 
-
 static struct csm_unpacked_op op_shl(struct csm_thread* t)
 {
     CSM_BINARY_OP(<<, i64, i64, t);
     CSM_DECODE_RETURN(t, hds);
 }
-
 
 static struct csm_unpacked_op op_shr(struct csm_thread* t)
 {
@@ -491,13 +452,11 @@ static struct csm_unpacked_op op_shr(struct csm_thread* t)
     CSM_DECODE_RETURN(t, hds);
 }
 
-
 static struct csm_unpacked_op op_add_i64(struct csm_thread* t)
 {
     CSM_BINARY_OP(+, i64, i64, t);
     CSM_DECODE_RETURN(t, hds);
 }
-
 
 static struct csm_unpacked_op op_sub_i64(struct csm_thread* t)
 {
@@ -505,13 +464,11 @@ static struct csm_unpacked_op op_sub_i64(struct csm_thread* t)
     CSM_DECODE_RETURN(t, hds);
 }
 
-
 static struct csm_unpacked_op op_mul_i64(struct csm_thread* t)
 {
     CSM_BINARY_OP(*, i64, i64, t);
     CSM_DECODE_RETURN(t, hds);
 }
-
 
 static struct csm_unpacked_op op_div_i64(struct csm_thread* t)
 {
@@ -519,13 +476,11 @@ static struct csm_unpacked_op op_div_i64(struct csm_thread* t)
     CSM_DECODE_RETURN(t, hds);
 }
 
-
 static struct csm_unpacked_op op_mod_i64(struct csm_thread* t)
 {
     CSM_BINARY_OP(%, i64, i64, t);
     CSM_DECODE_RETURN(t, hds);
 }
-
 
 static struct csm_unpacked_op op_neg_i64(struct csm_thread* t)
 {
@@ -533,13 +488,11 @@ static struct csm_unpacked_op op_neg_i64(struct csm_thread* t)
     CSM_DECODE_RETURN(t, hds);
 }
 
-
 static struct csm_unpacked_op op_add_f64(struct csm_thread* t)
 {
     CSM_BINARY_OP(+, f64, f64, t);
     CSM_DECODE_RETURN(t, hds);
 }
-
 
 static struct csm_unpacked_op op_sub_f64(struct csm_thread* t)
 {
@@ -547,20 +500,17 @@ static struct csm_unpacked_op op_sub_f64(struct csm_thread* t)
     CSM_DECODE_RETURN(t, hds);
 }
 
-
 static struct csm_unpacked_op op_mul_f64(struct csm_thread* t)
 {
     CSM_BINARY_OP(*, f64, f64, t);
     CSM_DECODE_RETURN(t, hds);
 }
 
-
 static struct csm_unpacked_op op_div_f64(struct csm_thread* t)
 {
     CSM_BINARY_OP(/, f64, f64, t);
     CSM_DECODE_RETURN(t, hds);
 }
-
 
 /* TODO: Implement support for floating point modulo. */
 static struct csm_unpacked_op op_mod_f64(struct csm_thread* t)
@@ -569,27 +519,23 @@ static struct csm_unpacked_op op_mod_f64(struct csm_thread* t)
     CSM_ALIGN_DECODE_RETURN(t, t->last_op, hds);
 }
 
-
 static struct csm_unpacked_op op_neg_f64(struct csm_thread* t)
 {
     CSM_UNARY_OP(-, f64, f64, t);
     CSM_DECODE_RETURN(t, hds);
 }
 
-
 static struct csm_unpacked_op op_cst_i64_f64(struct csm_thread* t)
 {
-    CSM_UNARY_OP((double), f64, i64, t);
+    CSM_UNARY_OP((csm_f64), f64, i64, t);
     CSM_DECODE_RETURN(t, hds);
 }
-
 
 static struct csm_unpacked_op op_cst_f64_i64(struct csm_thread* t)
 {
-    CSM_UNARY_OP((int64_t), i64, f64, t);
+    CSM_UNARY_OP((csm_i64), i64, f64, t);
     CSM_DECODE_RETURN(t, hds);
 }
-
 
 static struct csm_unpacked_op op_cmp_i64(struct csm_thread* t)
 {
@@ -597,13 +543,11 @@ static struct csm_unpacked_op op_cmp_i64(struct csm_thread* t)
     CSM_DECODE_RETURN(t, hds);
 }
 
-
 static struct csm_unpacked_op op_cmp_f64(struct csm_thread* t)
 {
     CSM_THREEWAY_COMPARISON_OP(f64, t);
     CSM_DECODE_RETURN(t, hds);
 }
-
 
 static struct csm_unpacked_op op_refcmp(struct csm_thread* t)
 {
@@ -618,13 +562,11 @@ static struct csm_unpacked_op op_refcmp(struct csm_thread* t)
     CSM_DECODE_RETURN(t, hds);
 }
 
-
 static struct csm_unpacked_op op_jmp_eqz(struct csm_thread* t)
 {
     CSM_COMPARE_ZERO_JUMP_OP(==, t);
     CSM_DECODE_RETURN(t, hds);
 }
-
 
 static struct csm_unpacked_op op_jmp_nez(struct csm_thread* t)
 {
@@ -632,13 +574,11 @@ static struct csm_unpacked_op op_jmp_nez(struct csm_thread* t)
     CSM_DECODE_RETURN(t, hds);
 }
 
-
 static struct csm_unpacked_op op_jmp_ltz(struct csm_thread* t)
 {
     CSM_COMPARE_ZERO_JUMP_OP(<, t);
     CSM_DECODE_RETURN(t, hds);
 }
-
 
 static struct csm_unpacked_op op_jmp_lez(struct csm_thread* t)
 {
@@ -646,13 +586,11 @@ static struct csm_unpacked_op op_jmp_lez(struct csm_thread* t)
     CSM_DECODE_RETURN(t, hds);
 }
 
-
 static struct csm_unpacked_op op_jmp_gtz(struct csm_thread* t)
 {
     CSM_COMPARE_ZERO_JUMP_OP(>, t);
     CSM_DECODE_RETURN(t, hds);
 }
-
 
 static struct csm_unpacked_op op_jmp_gez(struct csm_thread* t)
 {
@@ -660,16 +598,14 @@ static struct csm_unpacked_op op_jmp_gez(struct csm_thread* t)
     CSM_DECODE_RETURN(t, hds);
 }
 
-
 static struct csm_unpacked_op op_jmp(struct csm_thread* t)
 {
-    int32_t jump = 0;
+    csm_i32 jump = 0;
 
     jump = CSM_CUR_STREAM_U32(t);
     csm_stream_shift_abs(CSM_CUR_STREAM(t), jump);
     CSM_DECODE_RETURN(t, hds);
 }
-
 
 /* TODO: Figure out object model/metadata for this. */
 static struct csm_unpacked_op op_typeof(struct csm_thread* t)
@@ -677,14 +613,13 @@ static struct csm_unpacked_op op_typeof(struct csm_thread* t)
     CSM_ALIGN_DECODE_RETURN(t, t->last_op, hds);
 }
 
-
 static struct csm_unpacked_op
-cbridge_bc_(uint32_t idx, struct csm_descriptor d, struct csm_thread* t)
+cbridge_bc_(csm_u32 idx, struct csm_descriptor d, struct csm_thread* t)
 {
     struct csm_bc_method* f = d.as.bc_method;
     struct csm_cell* new_frame_top = NULL;
-    uint32_t i = 0;
-    uint16_t localspace = 0;
+    csm_u32 i = 0;
+    csm_u8 localspace = 0;
 
     /* Calculate new frame ceiling, is also saved datastack. */
     new_frame_top = CSM_DATASTACK_POS(t) + f->_paramc_;
@@ -730,11 +665,10 @@ cbridge_bc_(uint32_t idx, struct csm_descriptor d, struct csm_thread* t)
     CSM_DECODE_RETURN(t, hds);
 }
 
-
 /* TODO: Way to bridge back into bytecode methods during native calls? */
 /* TODO: "local_start" / "stream" / "saved_datastack_pos" are unset? */
 static struct csm_unpacked_op
-cbridge_native_(uint32_t idx, struct csm_descriptor d, struct csm_thread* t)
+cbridge_native_(csm_u32 idx, struct csm_descriptor d, struct csm_thread* t)
 {
     csm_native_handler native;
 
@@ -761,12 +695,11 @@ cbridge_native_(uint32_t idx, struct csm_descriptor d, struct csm_thread* t)
     CSM_DECODE_RETURN(t, hds);
 }
 
-
 static struct csm_unpacked_op op_call(struct csm_thread* t)
 {
     struct csm_cell val;
     struct csm_descriptor d;
-    uint32_t idx = 0;
+    csm_u32 idx = 0;
 
     idx = CSM_CUR_STREAM_U32(t);
 
@@ -790,7 +723,6 @@ static struct csm_unpacked_op op_call(struct csm_thread* t)
     CSM_RETURN_CUSTOM(t, csm_special_terminate_unexpected);
 }
 
-
 static struct csm_unpacked_op pop_callstack_frame(struct csm_thread* t)
 {
     CSM_CUR_FRAME(t)++;
@@ -804,7 +736,6 @@ static struct csm_unpacked_op pop_callstack_frame(struct csm_thread* t)
     CSM_DECODE_RETURN(t, hds);
 }
 
-
 static struct csm_unpacked_op op_ret(struct csm_thread* t)
 {
     struct csm_unpacked_op result;
@@ -815,7 +746,6 @@ static struct csm_unpacked_op op_ret(struct csm_thread* t)
     CSM_DATASTACK_PUSH(t, v);
     return result;
 }
-
 
 /**
  * The general algorithm for the return instruction handler is as follows:
@@ -831,14 +761,12 @@ static struct csm_unpacked_op op_leave(struct csm_thread* t)
     return pop_callstack_frame(t);
 }
 
-
 /* TODO: Figure out how we'd hook up a debugger. */
 static struct csm_unpacked_op op_break(struct csm_thread* t)
 {
     assert("Break instruction currently unsupported." == 0);
     CSM_ALIGN_DECODE_RETURN(t, t->last_op, hds);
 }
-
 
 /* TODO: Figure out how exception tables are stored in bytecode. */
 static struct csm_unpacked_op op_throw(struct csm_thread* t)
@@ -847,9 +775,7 @@ static struct csm_unpacked_op op_throw(struct csm_thread* t)
     CSM_ALIGN_DECODE_RETURN(t, t->last_op, hds);
 }
 
-
 csm_handler csm_handlers_unsafe[] = {
-
     op_nop,
     op_ldl,
     op_stl,
@@ -913,5 +839,4 @@ csm_handler csm_handlers_unsafe[] = {
     op_leave,
     op_break,
     op_throw
-
 };
