@@ -9,15 +9,11 @@ extern "C" {
 
 int csm_file_size(size_t *out, const char *name);
 
-
 int csm_file_read(const char *name, void *buf, size_t size);
 
-
 int csm_file_write(const char *name, void *buf, size_t size);
-
 
 #ifdef __cplusplus
 }
 #endif
-
 #endif

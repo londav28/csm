@@ -2,14 +2,8 @@
 #include "csm/memory/malloc.h"
 #include <assert.h>
 
-
-#define TRUE    (1)
-#define FALSE   (0)
-
-
 /* Just randomly picked 61 as my starting prime. */
 #define CSM_MAP_START_SIZE      61
-
 
 struct csm_map_node_ {
 
@@ -18,22 +12,8 @@ struct csm_map_node_ {
 
 };
 
-
-struct csm_map {
-
-    struct csm_map_node_ **table;
-    size_t tablesize;
-    double lf;
-    size_t size;
-    csm_hash hash;
-    csm_equals equals;
-
-};
-
-
 /* It's ok if this isn't that performant. Only called on table resize. */
-static int64_t
-next_prime_(int64_t after)
+static csm_i64 next_prime_(csm_i64 after)
 {
     int64_t n;
 
