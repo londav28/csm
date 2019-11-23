@@ -1,38 +1,35 @@
-#ifndef CSM_MEMORY_GC_H_
-#define CSM_MEMORY_GC_H_
+#ifndef CSM_INCLUDE_CSM_MEMORY_GC_H_
+#define CSM_INCLUDE_CSM_MEMORY_GC_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-
 #include "csm/types.h"
+#include "csm/machine/state.h"
 
-
-struct csm_thread;
-struct csm_descriptor;
 struct csm_gc_config;
 struct csm_gc_profile;
 struct csm_gc_info;
 
-
 /* Callback for collection routine. */
-typedef void (*csm_gc_callback)(struct csm_thread *t);
-
+typedef void (*csm_gc_callback)(csm_thread *t);
 
 /* Config GC options. */
-struct csm_gc_config {
-    int dummy;
-};
+typedef struct csm_gc_config {
 
+    int dummy;
+
+} csm_gc_config;
 
 /* Detailed GC collection details. */
-struct csm_gc_profile {
+typedef struct csm_gc_profile {
+
     int dummy;
-};
 
+} csm_gc_profile;
 
-enum csm_gc_tag {
+typedef enum csm_gc_tag {
 
     CSM_GC_TAG_OBJECT_BC = 0,
     CSM_GC_TAG_OBJECT_NATIVE,
@@ -41,81 +38,48 @@ enum csm_gc_tag {
     CSM_GC_TAG_ARRAY,
     CSM_GC_TAG_UNKNOWN
 
-};
+} csm_gc_tag;
 
+typedef struct csm_gc_header {
 
-struct csm_gc_header {
-
-    uint32_t* string;
-    uint16_t tag;
+    csm_u32 *string;
+    csm_u16 tag;
     size_t bytes;
 
-};
-
-    
-/**___________________________________________________________________________
- * MAIN INTERFRACE
- */
-
+} csm_gc_header;
 
 /* Used for debugging ONLY! */
-void
-csm_gc_stats(void);
+void csm_gc_stats(void);
 
+void csm_gc_config_default(csm_gc_config* out);
 
-void
-csm_gc_config_default(struct csm_gc_config* out);
+void csm_gc_setup(csm_gc_config* conf);
 
+void csm_gc_cleanup(void);
 
-void
-csm_gc_setup(struct csm_gc_config* conf);
+void csm_gc_profile(csm_gc_profile* out);
 
+/* If the thread is NULL the allocation is global. */
+void *csm_gc_alloc(csm_gc_header hdr, csm_thread* t);
 
-void
-csm_gc_cleanup(void);
-
-
-void
-csm_gc_profile(struct csm_gc_profile* out);
-
-
-/* If thread is NULL, the allocation is unowned and cannot be collected! */
-void *
-csm_gc_alloc(struct csm_gc_header hdr, struct csm_thread* t);
-
-
-void
-csm_gc_minimize(void);
-
+void csm_gc_minimize(void);
 
 /* TODO: Fine-tuned control over allocations. */
-void
-csm_gc_collect(void);
+void csm_gc_collect(void);
 
+void csm_gc_pin_on(void* object);
 
-void
-csm_gc_pin_on(void* object);
+void csm_gc_pin_off(void* object);
 
+void csm_gc_enable(void);
 
-void
-csm_gc_pin_off(void* object);
+void csm_gc_disable(void);
 
+csm_u64 csm_gc_heap_size(void);
 
-void
-csm_gc_enable(void);
-
-
-void
-csm_gc_disable(void);
-
-
-uint64_t
-csm_gc_heap_size(void);
-
-
+csm_u64 csm_gc_arena_size(csm_thread* t);
 
 #ifdef __cplusplus
 }
 #endif
-
 #endif
