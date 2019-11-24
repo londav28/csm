@@ -1,157 +1,124 @@
 #include "csm/stream.h"
+#include "csm/types.h"
 
-
-void
-csm_stream_init(struct csm_stream* s, void* buf, uint32_t size, int fe)
+void csm_stream_init(csm_stream *s, void* buf, csm_u32 size, int fe)
 {
     s->buf = buf;
     s->size = size;
     s->pos = 0;
     s->mode = fe;
+
+    return;
 }
 
-
-void
-csm_stream_restart(struct csm_stream* s)
+void csm_stream_restart(csm_stream *s)
 {
     s->pos = 0;
+    return;
 }
 
-
-int
-csm_stream_lt(struct csm_stream* s, uint32_t bytes)
+int csm_stream_lt(csm_stream *s, csm_u32 bytes)
 {
     return (s->pos + bytes) > s->size;
 }
 
-
-void*
-csm_stream_get_buf(struct csm_stream* s)
+void *csm_stream_get_buf(csm_stream *s)
 {
     return s->buf;
 }
 
-
-void*
-csm_stream_get_adjusted_buf(struct csm_stream* s)
+void *csm_stream_get_adjusted_buf(csm_stream *s)
 {
-    return ((uint8_t*) s->buf) + s->pos;
+    return ((csm_u8*) s->buf) + s->pos;
 }
 
-
-uint32_t
-csm_stream_get_pos(struct csm_stream* s)
+csm_u32 csm_stream_get_pos(csm_stream *s)
 {
     return s->pos;
 }
 
-
-int
-csm_stream_check_rel(struct csm_stream* s, int32_t adjust)
+int csm_stream_check_rel(csm_stream* s, csm_i32 adjust)
 {
     (void) s;
     (void) adjust;
     return 0;
 }
 
-
-int
-csm_stream_check_abs(struct csm_stream* s, uint32_t adjust)
+int csm_stream_check_abs(csm_stream *s, csm_u32 adjust)
 {
     (void) s;
     (void) adjust;
     return 0;
 }
 
-
-void
-csm_stream_shift_rel(struct csm_stream* s, int32_t adjust)
+void csm_stream_shift_rel(csm_stream *s, csm_i32 adjust)
 {
     s->pos += adjust;
+    return;
 }
 
-
-void
-csm_stream_shift_abs(struct csm_stream* s, uint32_t adjust)
+void csm_stream_shift_abs(csm_stream *s, csm_u32 adjust)
 {
     s->pos = adjust;
+    return;
 }
 
-
-uint8_t
-csm_stream_u8(struct csm_stream* s)
+csm_u8 csm_stream_u8(csm_stream *s)
 {
-    return ((uint8_t*) s->buf)[s->pos++];
+    return ((csm_u8*) s->buf)[s->pos++];
 }
 
-
-uint16_t
-csm_stream_u16(struct csm_stream* s)
+csm_u16 csm_stream_u16(csm_stream *s)
 {
-    uint8_t hi, lo;
+    csm_u8 hi, lo;
     lo = csm_stream_u8(s);
     hi = csm_stream_u8(s);
-    return ((uint16_t) hi << 8) | lo;
+    return ((csm_u16) hi << 8) | lo;
 }
 
-
-uint32_t
-csm_stream_u32(struct csm_stream* s)
+csm_u32 csm_stream_u32(csm_stream *s)
 {
-    uint16_t hi, lo;
+    csm_u16 hi, lo;
     lo = csm_stream_u16(s);
     hi = csm_stream_u16(s);
-    return ((uint32_t) hi << 16) | lo;
+    return ((csm_u32) hi << 16) | lo;
 }
 
-
-uint64_t
-csm_stream_u64(struct csm_stream* s)
+csm_u64 csm_stream_u64(csm_stream *s)
 {
-    uint32_t hi, lo;
+    csm_u32 hi, lo;
     lo = csm_stream_u32(s);
     hi = csm_stream_u32(s);
-    return ((uint64_t) hi << 32) | lo;
+    return ((csm_u64) hi << 32) | lo;
 }
 
-
-int8_t
-csm_stream_i8(struct csm_stream* s)
+csm_i8 csm_stream_i8(csm_stream *s)
 {
-    return (int8_t) csm_stream_u8(s);
+    return (csm_i8) csm_stream_u8(s);
 }
 
-
-int16_t
-csm_stream_i16(struct csm_stream* s)
+csm_i16 csm_stream_i16(csm_stream *s)
 {
-    return (int16_t) csm_stream_u16(s);
+    return (csm_i16) csm_stream_u16(s);
 }
 
-
-int32_t
-csm_stream_i32(struct csm_stream* s)
+csm_i32 csm_stream_i32(csm_stream *s)
 {
-    return (int32_t) csm_stream_u32(s);
+    return (csm_i32) csm_stream_u32(s);
 }
 
-
-int64_t
-csm_stream_i64(struct csm_stream* s)
+csm_i64 csm_stream_i64(csm_stream *s)
 {
-    return (int64_t) csm_stream_u64(s);
+    return (csm_i64) csm_stream_u64(s);
 }
 
-
-float
-csm_stream_f32(struct csm_stream* s)
+csm_f32 csm_stream_f32(csm_stream *s)
 {
-    return (float) csm_stream_u32(s);
+    return (csm_f32) csm_stream_u32(s);
 }
 
-
-double
-csm_stream_f64(struct csm_stream* s)
+csm_f64 csm_stream_f64(csm_stream *s)
 {
-    return (double) csm_stream_u64(s);
+    return (csm_f64) csm_stream_u64(s);
 }
+

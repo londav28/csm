@@ -1,5 +1,6 @@
 #include "csm/map.h"
 #include "csm/memory/malloc.h"
+#include "csm/types.h"
 #include <assert.h>
 
 /* Just randomly picked 61 as my starting prime. */
@@ -15,21 +16,22 @@ struct csm_map_node_ {
 /* It's ok if this isn't that performant. Only called on table resize. */
 static csm_i64 next_prime_(csm_i64 after)
 {
-    int64_t n;
+    csm_i64 n = 0;
 
     assert(after >= 0);
+
     if (after < 3) { return 3; }
     n = after;
 
     if ((n % 2) == 0) { n++; }
 
-    while (TRUE) {
-        int64_t i;
-        int is_prime = TRUE;
+    while (CSM_TRUE) {
+        csm_i64 i = 0;
+        int is_prime = CSM_TRUE;
 
         for (i = 3; i < (n/2); i++) {
             if ((n % i) == 0) {
-                is_prime = FALSE;
+                is_prime = CSM_FALSE;
                 break;
             }
         }
@@ -42,11 +44,9 @@ static csm_i64 next_prime_(csm_i64 after)
     return 0;
 }
 
-
-struct csm_map *
-csm_map_create(csm_hash hash, csm_equals equals)
+csm_map *csm_map_create(csm_hash hash, csm_equals equals)
 {
-    struct csm_map* result;
+    csm_map *result = NULL;
 
     result = csm_malloc(sizeof(*result));
     if (result == NULL) {
@@ -56,35 +56,27 @@ csm_map_create(csm_hash hash, csm_equals equals)
     (void) hash;
     (void) equals;
 
-    int64_t a = next_prime_(1);
+    csm_i64 a = next_prime_(1);
     (void) a;
-
-
 
 _unwind_0:
     return NULL;
 }
 
-
-void
-csm_map_destroy(struct csm_map *m)
+void csm_map_destroy(csm_map *m)
 {
     (void) m;
     return;
 }
 
-
-void *
-csm_map_get(struct csm_map *m, void *k)
+void *csm_map_get(csm_map *m, void *k)
 {
     (void) m;
     (void) k;
     return NULL;
 }
 
-
-void *
-csm_map_put(struct csm_map *m, void *k, void *v)
+void *csm_map_put(csm_map *m, void *k, void *v)
 {
     (void) m;
     (void) k;
@@ -92,27 +84,22 @@ csm_map_put(struct csm_map *m, void *k, void *v)
     return NULL;
 }
 
-
-void *
-csm_map_remove(struct csm_map *m, void *k)
+void *csm_map_remove(csm_map *m, void *k)
 {
     (void) m;
     (void) k;
     return NULL;
 }
 
-
-size_t
-csm_map_size(struct csm_map *m)
+size_t csm_map_size(csm_map *m)
 {
     (void) m;
     return 0;
 }
 
-
-void
-csm_map_clear(struct csm_map *m)
+void csm_map_clear(csm_map *m)
 {
     (void) m;
     return;
 }
+

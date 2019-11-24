@@ -1,8 +1,7 @@
 #include "csm/bytecode/opcodes.h"
 #include <string.h>
 
-
-const char* csm_op_mnemonic_table[] = {
+const char *csm_op_mnemonic_table[] = {
 
     "nop",
     "ldl",
@@ -71,8 +70,7 @@ const char* csm_op_mnemonic_table[] = {
 
 };
 
-
-uint8_t csm_op_imd_width_table[] = {
+csm_u8 csm_op_imd_width_table[] = {
 
     CSM_OP_IMD_WIDTH_0,     /* nop      */
     CSM_OP_IMD_WIDTH_1,     /* ldl      */
@@ -140,18 +138,12 @@ uint8_t csm_op_imd_width_table[] = {
 
 };
 
-
-const char*
-csm_op_mnemonic(uint8_t op) {
-    if (op <= CSM_OP_THROW) {
-        return csm_op_mnemonic_table[op];
-    }
+const char *csm_op_mnemonic(csm_u8 op) {
+    if (op <= CSM_OP_THROW) { return csm_op_mnemonic_table[op]; }
     return NULL;
 }
 
-
-int
-csm_op_is_jump(uint8_t op)
+int csm_op_is_jump(csm_u8 op)
 {
     return (
         op == CSM_OP_JMP_EQZ ||
@@ -164,16 +156,12 @@ csm_op_is_jump(uint8_t op)
     );
 }
 
-
-int
-csm_op_imd_u8(uint8_t op)
+int csm_op_imd_u8(csm_u8 op)
 {
     return (op == CSM_OP_LDL || op == CSM_OP_STL);
 }
 
-
-int
-csm_op_imd_u16(uint8_t op)
+int csm_op_imd_u16(csm_u8 op)
 {
     return (
         op == CSM_OP_LDG    ||
@@ -183,9 +171,7 @@ csm_op_imd_u16(uint8_t op)
     );
 }
 
-
-int
-csm_op_imd_u32(uint8_t op)
+int csm_op_imd_u32(csm_u8 op)
 {
     return (
         csm_op_is_jump(op)  ||
@@ -198,66 +184,22 @@ csm_op_imd_u32(uint8_t op)
     );
 }
 
+int csm_op_imd_u64(csm_u8 op) { (void) op; return 0; }
 
-int
-csm_op_imd_u64(uint8_t op)
-{
-    (void) op;
+int csm_op_imd_i8(csm_u8 op) { return (op == CSM_OP_PSH_B); }
+
+int csm_op_imd_i16(csm_u8 op) { return (op == CSM_OP_PSH_S); }
+
+int csm_op_imd_i32(csm_u8 op) { return (op == CSM_OP_PSH_D); }
+
+int csm_op_imd_i64(csm_u8 op) { (void) op; return 0; }
+
+int csm_op_imd_f32(csm_u8 op) { (void) op; return 0; }
+
+int csm_op_imd_f64(csm_u8 op) { (void) op; return 0; }
+
+csm_u8 csm_op_imd_width(csm_u8 op) {
+    if (op <= CSM_OP_THROW) { return csm_op_imd_width_table[op]; }
     return 0;
 }
-
-
-int
-csm_op_imd_i8(uint8_t op)
-{
-    return (op == CSM_OP_PSH_B);
-}
-
-
-int
-csm_op_imd_i16(uint8_t op)
-{
-    return (op == CSM_OP_PSH_S);
-}
-
-
-int
-csm_op_imd_i32(uint8_t op)
-{
-    return (op == CSM_OP_PSH_D);
-}
-
-
-int
-csm_op_imd_i64(uint8_t op)
-{
-    (void) op;
-    return 0;
-}
-
-
-int
-csm_op_imd_f32(uint8_t op)
-{
-    (void) op;
-    return 0;
-}
-
-
-int
-csm_op_imd_f64(uint8_t op)
-{
-    (void) op;
-    return 0;
-}
-
-
-uint8_t
-csm_op_imd_width(uint8_t op) {
-    if (op <= CSM_OP_THROW) {
-        return csm_op_imd_width_table[op];
-    }
-    return 0;
-}
-
 

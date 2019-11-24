@@ -615,8 +615,8 @@ static csm_unpacked_op op_typeof(csm_thread *t)
     CSM_ALIGN_DECODE_RETURN(t, t->last_op, hds);
 }
 
-static csm_unpacked_op
-cbridge_bc_(csm_u32 idx, csm_descriptor d, csm_thread *t)
+static
+csm_unpacked_op cbridge_bc_(csm_u32 idx, csm_descriptor d, csm_thread *t)
 {
     csm_bc_method *f = d.as.bc_method;
     csm_cell *new_frame_top = NULL;
@@ -844,3 +844,4 @@ csm_handler csm_handlers_unsafe[] = {
     op_throw
 
 };
+

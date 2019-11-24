@@ -10,7 +10,6 @@
 #include <assert.h>
 #include <stdio.h>
 
-
 /**
  * BIG TODO:
  *
@@ -19,13 +18,11 @@
  *
  */
 
-
 /* Stupid typedefs for convenience. */
-typedef struct csm_bc_module module;
-typedef struct csm_bc_method method;
-typedef struct csm_bc_object object;
-typedef struct csm_bc_string string;
-
+typedef csm_bc_module module;
+typedef csm_bc_method method;
+typedef csm_bc_object object;
+typedef csm_bc_string string;
 
 /* Assert that offset is within bounds. */
 #define BUFFER_CHECK(b, p, a) assert((p - a) >= b)
@@ -33,13 +30,12 @@ typedef struct csm_bc_string string;
 /* For a given base/pos/amount, assert that within bounds after push. */
 #define BUFFER_MOVE_CHECK(b, p, a) p -= a; assert(p >= b)
 
-
 /* TODO: Replace assert macro with a more meaningful exit code. */
 /* TODO: Add to header for frame manipulation. */
-struct csm_frame* local_frame_push(struct csm_thread* t, method* m)
+csm_frame *local_frame_push(csm_thread *t, method *m)
 {
-    struct csm_frame* result;
-    uint32_t movesize;
+    csm_frame *result = NULL;
+    csm_u32 movesize = 0;
 
     BUFFER_MOVE_CHECK(t->callstack_bot, t->callstack_pos, 1);
 
@@ -66,10 +62,9 @@ struct csm_frame* local_frame_push(struct csm_thread* t, method* m)
     return result;
 }
 
-
-struct csm_unpacked_op first_op_decode(struct csm_frame* frame)
+struct csm_unpacked_op first_op_decode(csm_frame *frame)
 {
-    struct csm_unpacked_op result;
+    csm_unpacked_op result;
 
     if (csm_stream_lt(&frame->stream, 1)) {
         /* Change this to a special error hander instead? */
@@ -84,11 +79,11 @@ struct csm_unpacked_op first_op_decode(struct csm_frame* frame)
 }
 
 /* TODO: Add separate dispatch loop to use just for traces? */
-int csm_dispatch_basic(struct csm_thread*t, struct csm_bc_method* m)
+int csm_dispatch_basic(csm_thread *t, csm_bc_method *m)
 {
-    struct csm_frame* frame;
-    struct csm_unpacked_op uop;
-    uint64_t decodes = 0;
+    csm_frame *frame;
+    csm_unpacked_op uop;
+    csm_u64 decodes = 0;
 
     frame = local_frame_push(t, m);
     if (frame == NULL) { return CSM_ERR_STARTUP; }
@@ -98,6 +93,7 @@ int csm_dispatch_basic(struct csm_thread*t, struct csm_bc_method* m)
     while (uop.handler != NULL) {
         /*
         TODO: Add flag to record execution traces, IE...
+        TODO: Put this in a separate handler.
         if (INSTRUCTION_TRACES_ENABLED(thread->machine)) {
             fprintf(machine->tracelog, "%lu : %s\n",
                     decodes,
@@ -112,3 +108,4 @@ int csm_dispatch_basic(struct csm_thread*t, struct csm_bc_method* m)
 
     return 0;
 }
+
