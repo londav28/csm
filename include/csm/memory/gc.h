@@ -10,7 +10,7 @@ extern "C" {
 
 struct csm_gc_config;
 struct csm_gc_profile;
-struct csm_gc_info;
+struct csm_gc_header;
 
 /* Callback for collection routine. */
 typedef void (*csm_gc_callback)(csm_thread *t);
@@ -23,11 +23,11 @@ typedef struct csm_gc_config {
 } csm_gc_config;
 
 /* Detailed GC collection details. */
-typedef struct csm_gc_profile {
+typedef struct csm_gc_prof {
 
     int dummy;
 
-} csm_gc_profile;
+} csm_gc_prof;
 
 typedef enum csm_gc_tag {
 
@@ -51,25 +51,25 @@ typedef struct csm_gc_header {
 /* Used for debugging ONLY! */
 void csm_gc_stats(void);
 
-void csm_gc_config_default(csm_gc_config* out);
+void csm_gc_config_default(csm_gc_config *out);
 
-void csm_gc_setup(csm_gc_config* conf);
+void csm_gc_setup(csm_gc_config *conf);
 
 void csm_gc_cleanup(void);
 
-void csm_gc_profile(csm_gc_profile* out);
+void csm_gc_profile(csm_gc_prof *out);
 
 /* If the thread is NULL the allocation is global. */
-void *csm_gc_alloc(csm_gc_header hdr, csm_thread* t);
+void *csm_gc_alloc(csm_gc_header hdr, csm_thread *t);
 
 void csm_gc_minimize(void);
 
 /* TODO: Fine-tuned control over allocations. */
 void csm_gc_collect(void);
 
-void csm_gc_pin_on(void* object);
+void csm_gc_pin_on(void *object);
 
-void csm_gc_pin_off(void* object);
+void csm_gc_pin_off(void *object);
 
 void csm_gc_enable(void);
 
@@ -77,9 +77,10 @@ void csm_gc_disable(void);
 
 csm_u64 csm_gc_heap_size(void);
 
-csm_u64 csm_gc_arena_size(csm_thread* t);
+csm_u64 csm_gc_arena_size(csm_thread *t);
 
 #ifdef __cplusplus
 }
 #endif
 #endif
+

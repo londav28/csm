@@ -1,7 +1,6 @@
 #include "csm/native/module/io.h"
 #include "csm/machine/state.h"
 #include "csm/bytecode/format.h"
-#include "csm/native/module/io.h"
 #include "csm/types.h"
 #include <stdlib.h>
 #include <stdio.h>

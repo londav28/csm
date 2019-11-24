@@ -9,6 +9,10 @@ extern "C" {
 
 struct csm_map_node_;
 
+typedef csm_u64 (*csm_hash)(void *data);
+
+typedef int (*csm_equals)(void *one, void *two);
+
 typedef struct csm_map {
 
     struct csm_map_node_ **table;
@@ -20,15 +24,9 @@ typedef struct csm_map {
 
 } csm_map;
 
-typedef csm_u64 (*csm_hash)(void *data);
+int csm_map_init(csm_map *out, csm_hash hash, csm_equals equals);
 
-typedef int (*csm_equals)(void *one, void *two);
-
-csm_map *csm_map_create(csm_hash hash, csm_equals equals);
-
-int csm_map_init(csm_hash hash, csm_equals equals);
-
-void csm_map_destroy(csm_map *m);
+void csm_map_fini(csm_map *m);
 
 void *csm_map_get(csm_map *m, void *k);
 

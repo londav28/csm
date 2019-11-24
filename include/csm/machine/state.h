@@ -6,12 +6,10 @@ extern "C" {
 #endif
 
 #include "csm/types.h"
+#include "csm/bytecode/format.h"
 #include "csm/stream.h"
 
 /* So that we don't have to worry about the ordering of things. */
-struct csm_bytecode_module;
-struct csm_bytecode_method;
-struct csm_bytecode_object;
 struct csm_native_method;
 struct csm_native_object;
 struct csm_object_header;
@@ -43,16 +41,37 @@ typedef struct csm_cell {
     } as;
 } csm_cell;
 
+typedef struct csm_thread {
+
+    struct csm_cell *datastack_bot;
+    struct csm_cell *datastack_top;
+    struct csm_cell *datastack_pos;
+    csm_u32 datastack_size;
+
+    /* We may end up removing this and threading frames later. */
+    struct csm_frame *callstack_bot;
+    struct csm_frame *callstack_top;
+    struct csm_frame *callstack_pos;
+    csm_u32 callstack_size;
+
+    /* For debugging purposes. */
+    csm_u8 last_op;
+
+    /* Pointer to parent! */
+    struct csm_machine *machine;
+
+} csm_thread;
+
 typedef struct csm_machine {
 
     /* Let's just pretend like LDG & STG don't exist for now. */
-    csm_cell *globals;
+    struct csm_cell *globals;
 
     /* We use this even in a single threaded machine. */
-    csm_thread *mainthread;
+    struct csm_thread *mainthread;
 
     /* List of all threads, where 0 is mainthread. */
-    csm_thread **threads;
+    struct csm_thread **threads;
     csm_u64 threadc;
 
     /* So that the machine knows where to start. */
@@ -66,39 +85,19 @@ typedef struct csm_machine {
 
 } csm_machine;
 
-typedef struct csm_thread {
-
-    csm_cell *datastack_bot;
-    csm_cell *datastack_top;
-    csm_cell *datastack_pos;
-    csm_u32 datastack_size;
-
-    /* We may end up removing this and threading frames later. */
-    csm_frame *callstack_bot;
-    csm_frame *callstack_top;
-    csm_frame *callstack_pos;
-    csm_u32 callstack_size;
-
-    /* For debugging purposes. */
-    csm_u8 last_op;
-
-    /* Pointer to parent! */
-    csm_machine* machine;
-
-} struct csm_thread;
 
 typedef struct csm_unpacked_op {
 
     csm_u8 op;
     struct csm_unpacked_op (*handler)(csm_thread*);
 
-};
+} csm_unpacked_op;
 
 /* Commonly returned by most handlers. */
-typedef struct csm_unpacked_op (*csm_handler)(struct csm_thread*);
+typedef csm_unpacked_op (*csm_handler)(csm_thread*);
 
 /* Native handlers have a different signature? */
-typedef void (*csm_native_handler)(struct csm_thread*);
+typedef void (*csm_native_handler)(csm_thread*);
 
 typedef enum csm_descriptor_type {
 
@@ -115,9 +114,9 @@ typedef struct csm_descriptor {
     union {
 
         csm_bc_method *bc_method;
-        csm_native_method *native_method;
+        struct csm_native_method *native_method;
         csm_bc_object *bc_object;
-        csm_native_object *native_object;
+        struct csm_native_object *native_object;
         void *raw;
 
     } as;
@@ -149,9 +148,9 @@ typedef struct csm_array_header {
 
 typedef struct csm_frame {
 
-    csm_cell *saved_datastack_pos;
-    csm_cell *local_start;
-    csm_descriptor owner;
+    struct csm_cell *saved_datastack_pos;
+    struct csm_cell *local_start;
+    struct csm_descriptor owner;
 
     /* TODO: If we can use pointer reads directly, we can remove this. */
     csm_stream stream;

@@ -1,5 +1,5 @@
 #include "csm/machine/start.h"
-#include "csm/native/setup.h"
+#include "csm/native/interface.h"
 #include "csm/bytecode/format.h"
 #include "csm/machine/state.h"
 #include "csm/errorcodes.h"

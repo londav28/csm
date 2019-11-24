@@ -1,4 +1,4 @@
-#include "csm/native/resolution.h"
+#include "csm/native/interface.h"
 #include "csm/native/module/io.h"
 #include "csm/native/module/mem.h"
 #include "csm/machine/state.h"

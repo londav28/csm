@@ -9,13 +9,13 @@
 #define CSM_ALIGN_8(amount) CSM_ALIGN(amount, 8)
 
 /* TODO: Expose this later? */
-struct csm_untracked_header {
+typedef struct csm_untracked_header {
 
-    csm_untracked_header *next;
-    csm_untracked_header *prev;
+    struct csm_untracked_header *next;
+    struct csm_untracked_header *prev;
     csm_u64 size;
 
-};
+} csm_untracked_header;
 
 /* Intrusive list of untracked allocations. */
 static csm_untracked_header *untracked_start = NULL;

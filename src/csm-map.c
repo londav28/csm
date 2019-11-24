@@ -44,26 +44,22 @@ static csm_i64 next_prime_(csm_i64 after)
     return 0;
 }
 
-csm_map *csm_map_create(csm_hash hash, csm_equals equals)
+int csm_map_init(csm_map* out, csm_hash hash, csm_equals equals)
 {
-    csm_map *result = NULL;
+    csm_i64 a = next_prime_(1);
 
-    result = csm_malloc(sizeof(*result));
-    if (result == NULL) {
-        goto _unwind_0;
-    }
-
+    (void) a;
+    (void) out;
     (void) hash;
     (void) equals;
 
-    csm_i64 a = next_prime_(1);
-    (void) a;
+    goto _unwind_0;
 
 _unwind_0:
-    return NULL;
+    return -1;
 }
 
-void csm_map_destroy(csm_map *m)
+void csm_map_fini(csm_map *m)
 {
     (void) m;
     return;

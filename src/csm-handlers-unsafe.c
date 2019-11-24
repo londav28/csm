@@ -1,16 +1,13 @@
 #include "csm/handlers/unsafe.h"
-#include "csm/types.h"
 #include "csm/machine/state.h"
 #include "csm/machine/frame.h"
 #include "csm/bytecode/opcodes.h"
 #include "csm/bytecode/format.h"
-#include "csm/native/resolution.h"
-#include "csm/native/module/io.h"
+#include "csm/native/interface.h"
 #include "csm/memory/gc.h"
 #include "csm/handlers/special.h"
 #include "csm/memset.h"
-#include <stdint.h>
-#include <stddef.h>
+#include "csm/types.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -621,7 +618,7 @@ csm_unpacked_op cbridge_bc_(csm_u32 idx, csm_descriptor d, csm_thread *t)
     csm_bc_method *f = d.as.bc_method;
     csm_cell *new_frame_top = NULL;
     csm_u32 i = 0;
-    csm_u8 localspace = 0;
+    csm_u16 localspace = 0;
 
     /* Calculate new frame ceiling, is also saved datastack. */
     new_frame_top = CSM_DATASTACK_POS(t) + f->_paramc_;

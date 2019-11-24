@@ -7,6 +7,13 @@ extern "C" {
 
 #include "csm/types.h"
 
+struct csm_bc_module;
+struct csm_bc_ete;
+struct csm_bc_tlabel;
+struct csm_bc_method;
+struct csm_bc_object;
+struct csm_bc_string;
+
 typedef struct csm_bc_module {
 
     /* Does module own buffer, or not? */
@@ -19,13 +26,13 @@ typedef struct csm_bc_module {
     csm_u8 status_3;
 
     csm_u32 methodc;
-    csm_bc_method *methods;
+    struct csm_bc_method *methods;
 
     csm_u32 objectc;
-    csm_bc_object *objects;
+    struct csm_bc_object *objects;
 
     csm_u32 strc;
-    csm_bc_string *strs;
+    struct csm_bc_string *strs;
 
     csm_u32 int64c;
     csm_i64 *int64s;
@@ -74,8 +81,8 @@ typedef struct csm_bc_method {
     /* Computed after load. */
     int post;
     csm_u32 _paramc_;
-    csm_bc_tlabel* _params_;
-    csm_bc_tlabel _rtype_;
+    struct csm_bc_tlabel* _params_;
+    struct csm_bc_tlabel _rtype_;
     csm_u32 _insc_;
 
 } csm_bc_method;
@@ -85,10 +92,13 @@ typedef struct csm_bc_object {
     csm_u32 name;
     csm_u32 fieldblock;
 
+    csm_u8 status_0;
+    csm_u8 status_1;
+
     /* Computed after load. */
     int post;
     csm_u32 _fieldc_;
-    csm_bc_tlabel* _fields_;
+    struct csm_bc_tlabel *_fields_;
 
 } csm_bc_object;
 

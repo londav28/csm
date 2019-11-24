@@ -21,7 +21,7 @@ typedef struct csm_traced_header {
     csm_gc_header hdr;
     /* TODO: Embed the mark into the last bit of the link pointer. */
     csm_u8 mark;
-    csm_traced_header *next;
+    struct csm_traced_header *next;
     csm_u64 size;
 
 } csm_traced_header;
@@ -58,7 +58,7 @@ void csm_gc_config_default(csm_gc_config *out)
     return;
 }
 
-void csm_gc_profile(csm_gc_profile *out)
+void csm_gc_profile(csm_gc_prof *out)
 {
     (void) out;
     return;
