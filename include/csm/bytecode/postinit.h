@@ -1,45 +1,26 @@
-#ifndef CSM_BYTECODE_POSTINIT_H_
-#define CSM_BYTECODE_POSTINIT_H_
+#ifndef CSM_INCLUDE_CSM_BYTECODE_POSTINIT_H_
+#define CSM_INCLUDE_CSM_BYTECODE_POSTINIT_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#include "csm/types.h"
+#include "csm/bytecode/format.h"
 
-#include <stdint.h>
+void csm_bc_method_post_flags(csm_bc_method* m);
 
+csm_u32 csm_bc_method_post_paramc(csm_bc_method* m);
 
-struct csm_bc_method;
-struct csm_bc_object;
-struct csm_bc_tlabel;
+csm_bc_tlabel *csm_bc_method_post_params(csm_bc_method* m);
 
+csm_u32 csm_bc_method_post_insc(csm_bc_method* m);
 
-void
-csm_bc_method_post_flags(struct csm_bc_method* m);
+csm_u32 csm_bc_object_post_fieldc(csm_bc_object* o);
 
-
-uint32_t
-csm_bc_method_post_paramc(struct csm_bc_method* m);
-
-
-struct csm_bc_tlabel*
-csm_bc_method_post_params(struct csm_bc_method* m);
-
-
-uint32_t
-csm_bc_method_post_insc(struct csm_bc_method* m);
-
-
-uint32_t
-csm_bc_object_post_fieldc(struct csm_bc_object* o);
-
-
-struct cm_bc_tlabel*
-csm_bc_object_post_fields(struct csm_bc_object* o);
-
+csm_bc_tlabel *csm_bc_object_post_fields(csm_bc_object* o);
 
 #ifdef __cplusplus
 }
 #endif
-
 #endif

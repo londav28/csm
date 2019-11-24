@@ -1,51 +1,35 @@
-#ifndef CSM_MACHINE_INIT_H_
-#define CSM_MACHINE_INIT_H_
+#ifndef CSM_INCLUDE_CSM_MACHINE_INIT_H_
+#define CSM_INCLUDE_CSM_MACHINE_INIT_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#include "csm/types.h"
+#include "csm/machine/state.h"
 
-#include <stddef.h>
-#include <stdint.h>
+typedef struct csm_init_profile {
 
+    csm_u32 datastack_limit;
+    csm_u32 callstack_limit;
+    csm_u8 gc_latency_level;
 
-struct csm_thread;
-struct csm_machine;
+} csm_init_profile;
 
+int csm_thread_init_basic(
+        csm_thread *t,
+        csm_machine *m,
+        csm_u32 data_stack_size,
+        csm_u32 call_stack_size
+        );
 
-struct csm_init_profile {
+void csm_thread_cleanup_basic(csm_thread *t);
 
-    uint32_t datastack_limit;
-    uint32_t callstack_limit;
-    uint8_t gc_latency_level;
+int csm_machine_init_basic(csm_machine *m, csm_init_profile *p);
 
-};
-
-
-int
-csm_thread_init_basic(
-        struct csm_thread *t,
-        struct csm_machine *m,
-        uint32_t data_stack_size,
-        uint32_t call_stack_size
-);
-
-
-void
-csm_thread_cleanup_basic(struct csm_thread *t);
-
-
-int
-csm_machine_init_basic(struct csm_machine *m, struct csm_init_profile *p);
-
-
-void
-csm_machine_cleanup_basic(struct csm_machine *m);
-
+void csm_machine_cleanup_basic(csm_machine *m);
 
 #ifdef __cplusplus
 }
 #endif
-
 #endif

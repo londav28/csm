@@ -1,42 +1,36 @@
 #include "csm/machine/start.h"
-#include "csm/native/setup.h"
+#include "csm/native/interface.h"
 #include "csm/bytecode/format.h"
 #include "csm/machine/state.h"
 #include "csm/errorcodes.h"
 #include "csm/machine/dispatch.h"
-#include <stddef.h>
-#include <stdint.h>
+#include "csm/types.h"
 #include <string.h>
 
+typedef csm_bc_module module;
+typedef csm_bc_method method;
+typedef csm_bc_object object;
+typedef csm_bc_string string;
 
-typedef struct csm_bc_module module;
-typedef struct csm_bc_method method;
-typedef struct csm_bc_object object;
-typedef struct csm_bc_string string;
-
-
-static string* get_string(module* m, uint32_t idx)
+static string *get_string(module *m, csm_u32 idx)
 {
     if (idx >= m->strc) { return NULL; }
-
     return m->strs + idx;
 }
 
-
-static int is_string(module* m, uint32_t idx, const char* name)
+static int is_string(module* m, csm_u32 idx, const char* name)
 {
-    string* str = get_string(m, idx);
+    string *str = get_string(m, idx);
 
     if (str == NULL) { return 0; }
 
     return !strncmp(name, str->data, str->length);
 }
 
-
-method* resolve_start_method(module* m)
+method *resolve_start_method(module *m)
 {
-    method* f = NULL;
-    uint32_t i = 0;
+    method *f = NULL;
+    csm_u32 i = 0;
 
     for (i = 0; i < m->methodc; i++) {
         f = m->methods + i;
@@ -46,8 +40,7 @@ method* resolve_start_method(module* m)
     return NULL;
 }
 
-
-int csm_start_basic(struct csm_machine* m, struct csm_bc_module* mod)
+int csm_start_basic(csm_machine *m, csm_bc_module *mod)
 {
     method* start = NULL;
     int err = 0;

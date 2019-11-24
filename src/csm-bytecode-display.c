@@ -1,3 +1,4 @@
+#include "csm/bytecode/display.h"
 #include "csm/bytecode/format.h"
 #include "csm/stream.h"
 #include "csm/bytecode/opcodes.h"
@@ -5,21 +6,17 @@
 #include <inttypes.h>
 #include <string.h>
 
+typedef csm_bc_module module;
+typedef csm_bc_method method;
+typedef csm_bc_object object;
+typedef csm_bc_string string;
 
-typedef struct csm_bc_module module;
-typedef struct csm_bc_method method;
-typedef struct csm_bc_object object;
-typedef struct csm_bc_string string;
-
-
-const char* tb_ =   "  ";
-
+const char *tb_ =   "  ";
 
 /* TODO: This version is not thread safe. */
-int
-csm_op_mnemonic_max_length(void)
+int csm_op_mnemonic_max_length(void)
 {
-    const char* loop = NULL;
+    const char *loop = NULL;
     static int set = 0;
     static int max = 0;
     int count = 0;
@@ -36,26 +33,24 @@ csm_op_mnemonic_max_length(void)
     return max;
 }
 
-
 static void print_spaces(int amount)
 {
     int i = 0;
-    for (i = 0; i < amount; i++) {
-        putc(' ', stdout);
-    }
+
+    for (i = 0; i < amount; i++) { putc(' ', stdout); }
+
+    return;
 }
 
-
-static string* get_string(module* m, uint32_t idx)
+static string *get_string(module *m, csm_u32 idx)
 {
     if (idx >= m->strc) { return NULL; }
     return m->strs + idx;
 }
 
-
-static void display_string_constant(module* m, uint32_t idx)
+static void display_string_constant(module *m, csm_u32 idx)
 {
-    string* str = get_string(m, idx);
+    string *str = get_string(m, idx);
 
     if (str) {
         /* May want to calculate the cutoff instead? */
@@ -68,21 +63,22 @@ static void display_string_constant(module* m, uint32_t idx)
     }
 
     printf("bad-index: %" PRIu32, idx);
+
     return;
 }
 
 /* TODO: Parameterize this so we can dump to any file? */
 static void display_instruction(
-            uint32_t ofs,
-            module* m,
-            uint8_t op,
-            struct csm_stream* s
+            csm_u32 ofs,
+            module *m,
+            csm_u8 op,
+            csm_stream *s
 ){
-    uint8_t width = 0;
+    csm_u8 width = 0;
     int padding = 0;
     int len = 0;
     int maxlen = 0;
-    const char* mne = NULL;
+    const char *mne = NULL;
 
     /* Fetch instruction mnemonic. */
     mne = csm_op_mnemonic(op);
@@ -111,14 +107,13 @@ static void display_instruction(
     padding = ((maxlen % 4)) + (maxlen - len);
     print_spaces(padding);
 
-    /* Big ugly block to print out immediates appropriately. */
     /* TODO: Convert this to a switch case? */
     if (csm_op_imd_u8(op)) {
         printf("%" PRIu8, csm_stream_u8(s));
     } else if (csm_op_imd_u16(op)) {
         printf("%" PRIu16, csm_stream_u16(s));
     } else if (csm_op_imd_u32(op)) {
-        uint32_t idx = csm_stream_u32(s);
+        csm_u32 idx = csm_stream_u32(s);
         if (csm_op_is_jump(op)) {
             printf("0x%" PRIx32, idx);
         } else {
@@ -147,13 +142,12 @@ static void display_instruction(
     return;
 }
 
-
-static void display_instruction_stream(module *m, method* f)
+static void display_instruction_stream(module *m, method *f)
 {
-    struct csm_stream* s = NULL;
-    struct csm_stream stream;
-    uint8_t op = 0;
-    uint32_t offset = 0;
+    csm_stream *s = NULL;
+    csm_stream stream;
+    csm_u8 op = 0;
+    csm_u32 offset = 0;
 
     (void) m;
 
@@ -178,14 +172,12 @@ static void display_instruction_stream(module *m, method* f)
     return;
 }
 
-
-static void
-display_etes(module* m, method* f)
+static void display_etes(module *m, method *f)
 {
-    uint32_t i = 0;
+    csm_u32 i = 0;
 
     for (i = 0; i < f->etec; i++) {
-        struct csm_bc_ete* ete = f->etes + i;
+        csm_bc_ete *ete = f->etes + i;
 
         printf("-- Displaying exception table entry %" PRIu32 "\n", i);
         printf("  > Type: ");
@@ -199,8 +191,7 @@ display_etes(module* m, method* f)
     return;
 }
 
-
-static void display_method(uint32_t* n, module* m, method* f)
+static void display_method(csm_u32 *n, module *m, method *f)
 {
     printf("-- Displaying method %" PRIu32 " --\n", *n);
 
@@ -225,10 +216,11 @@ static void display_method(uint32_t* n, module* m, method* f)
     printf("-- Exception table entries (%" PRIu32 "):\n", f->etec);
     display_etes(m, f);
 
+    return;
 }
 
 
-static void display_object(uint32_t* n, module* m, object* o)
+static void display_object(csm_u32 *n, module *m, object *o)
 {
     printf("-- Displaying object %" PRIu32 " --\n", *n);
 
@@ -239,12 +231,14 @@ static void display_object(uint32_t* n, module* m, object* o)
     printf( "-- Field block: ");
     display_string_constant(m, o->fieldblock);
     printf("\n");
+
+    return;
 }
 
 
-void csm_bc_display(struct csm_bc_module* m)
+void csm_bc_display(csm_bc_module *m)
 {
-    uint32_t i = 0;
+    csm_u32 i = 0;
 
     printf("-- File size is: %" PRIu64 "\n", m->bufsize);
 
@@ -270,4 +264,6 @@ void csm_bc_display(struct csm_bc_module* m)
         printf("%s", m->strs[i].data);
         printf("\n");
     }
+
+    return;
 }

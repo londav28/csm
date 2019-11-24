@@ -8,7 +8,6 @@
 #include <assert.h>
 #include <stdio.h>
 
-
 /**
  * readf__  = Wide stream read function to use.
  * out__    = Variable to store output.
@@ -26,46 +25,35 @@
         out__ = readf__(ws__);                                              \
     } while (0)
 
-
 #define CSM_CHECKED_WREAD_U8(out__, s__, err__, fail__)                     \
     CSM_CHECKED_WREAD(csm_wstream_u8, out__, s__, 1, err__, fail__)
-
 
 #define CSM_CHECKED_WREAD_U16(out__, s__,  err__, fail__)                   \
     CSM_CHECKED_WREAD(csm_wstream_u16, out__, s__, 2, err__, fail__)
 
-
 #define CSM_CHECKED_WREAD_U32(out__, s__,  err__, fail__)                   \
     CSM_CHECKED_WREAD(csm_wstream_u32, out__, s__, 4, err__, fail__)
-
 
 #define CSM_CHECKED_WREAD_U64(out__, s__,  err__, fail__)                   \
     CSM_CHECKED_WREAD(csm_wstream_u64, out__, s__, 8, err__, fail__)
 
-
 #define CSM_CHECKED_WREAD_I8(out__, s__,  err__, fail__)                    \
     CSM_CHECKED_WREAD(csm_wstream_i8, out__, s__, 1, err__, fail__)
-
 
 #define CSM_CHECKED_WREAD_I16(out__, s__,  err__, fail__)                   \
     CSM_CHECKED_WREAD(csm_wstream_i16, out__, s__, 2, err__, fail__)
 
-
 #define CSM_CHECKED_WREAD_I32(out__, s__,  err__, fail__)                   \
     CSM_CHECKED_WREAD(csm_wstream_i32, out__, s__, 4, err__, fail__)
-
 
 #define CSM_CHECKED_WREAD_I64(out__, s__,  err__, fail__)                   \
     CSM_CHECKED_WREAD(csm_wstream_i64, out__, s__, 8, err__, fail__)
 
-
 #define CSM_CHECKED_WREAD_F32(out__, s__,  err__, fail__)                   \
     CSM_CHECKED_WREAD(csm_wstream_f32, out__, s__, 4, err__, fail__)
 
-
 #define CSM_CHECKED_WREAD_F64(out__, s__,  err__, fail__)                   \
     CSM_CHECKED_WREAD(csm_wstream_f64, out__, s__, 8, err__, fail__)
-
 
 /**
  * pref__   = Object prefix, used to call other functions.
@@ -75,14 +63,13 @@
 #define CSM_DSRL_BLOCK_UNWIND(pref__, fb__, until__)                        \
     do {                                                                    \
         if (fb__) {                                                         \
-            uint64_t i = 0;                                                 \
+            csm_u64 i = 0;                                                  \
             for (i = 0; i < until__; i++) {                                 \
                 deinit_ ## pref__ ## _(fb__ + i);                           \
             }                                                               \
             csm_free(fb__);                                                 \
         }                                                                   \
     } while (0)
-
 
 /**
  * pref__   = Object prefix, used to call other functions.
@@ -95,7 +82,7 @@
  */
 #define CSM_DSRL_BLOCK(pref__, fc__, fb__, m__, ws__, err__, fail__)        \
     do {                                                                    \
-        uint64_t cr = 0;                                                    \
+        csm_u64 cr = 0;                                                     \
         size_t bytes = 0;                                                   \
         CSM_CHECKED_WREAD_U32(fc__, ws__, err__, fail__);                   \
         fb__ = NULL;                                                        \
@@ -117,35 +104,31 @@
         }                                                                   \
     } while (0)
 
-
 /* Internal typedefs used for convenience. */
-typedef struct csm_bc_module module;
-typedef struct csm_bc_method method;
-typedef struct csm_bc_object object;
-typedef struct csm_bc_string string;
-typedef struct csm_bc_ete ete;
-typedef struct csm_wstream wstream;
-
+typedef csm_bc_module module;
+typedef csm_bc_method method;
+typedef csm_bc_object object;
+typedef csm_bc_string string;
+typedef csm_bc_ete ete;
+typedef csm_wstream wstream;
 
 /* NOTE: Abide by specific naming conventions for dsrl and cleanup! */
-static int dsrl_method_(method* out, module* m, wstream* ws);
-static int dsrl_object_(object* out, module* m, wstream* ws);
-static int dsrl_string_(string* out, module* m, wstream* ws);
-static int dsrl_int64_(int64_t* out, module* m, wstream* ws);
-static int dsrl_flt64_(double* out, module* m, wstream* ws);
-static int dsrl_ete_(ete* out, module *m, wstream* ws);
-static void deinit_method_(method* dead); 
-static void deinit_object_(object* dead);
-static void deinit_string_(string* dead);
-static void deinit_int64_(int64_t* dead);
-static void deinit_flt64_(double* dead);
-static void deinit_ete_(ete* dead);
+static int dsrl_method_(method *out, module *m, wstream *ws);
+static int dsrl_object_(object *out, module *m, wstream *ws);
+static int dsrl_string_(string *out, module *m, wstream *ws);
+static int dsrl_int64_(csm_i64 *out, module *m, wstream *ws);
+static int dsrl_flt64_(csm_f64 *out, module *m, wstream *ws);
+static int dsrl_ete_(ete *out, module *m, wstream *ws);
+static void deinit_method_(method *dead); 
+static void deinit_object_(object *dead);
+static void deinit_string_(string *dead);
+static void deinit_int64_(csm_i64 *dead);
+static void deinit_flt64_(csm_f64 *dead);
+static void deinit_ete_(ete *dead);
 
-
-static int 
-dsrl_method_(method* out, module* m, wstream* ws)
+static int dsrl_method_(method *out, module *m, wstream *ws)
 {
-    uint64_t i = 0;
+    csm_u64 i = 0;
     int err = 0;
 
     (void) m;
@@ -185,9 +168,7 @@ _unwind_0:
     return err;
 }
 
-
-static int
-dsrl_object_(object* out, module* m, wstream* ws)
+static int dsrl_object_(object *out, module *m, wstream *ws)
 {
     int err = 0;
 
@@ -203,11 +184,9 @@ _unwind_0:
     return err;
 }
 
-
-static int
-dsrl_string_(string* out, module* m, wstream* ws)
+static int dsrl_string_(string *out, module *m, wstream *ws)
 {
-    uint64_t i = 0;
+    csm_u64 i = 0;
     int err = 0;
 
     (void) m;
@@ -240,11 +219,9 @@ _unwind_0:
     return err;
 }
 
-
-static int
-dsrl_int64_(int64_t* out, module* m, wstream* ws)
+static int dsrl_int64_(csm_i64 *out, module *m, wstream *ws)
 {
-    int64_t temp = 0;
+    csm_i64 temp = 0;
     int err = 0;
 
     (void) m;
@@ -258,11 +235,9 @@ _unwind_0:
     return err;
 }
 
-
-static int
-dsrl_flt64_(double* out, module* m, wstream* ws)
+static int dsrl_flt64_(csm_f64 *out, module *m, wstream *ws)
 {
-    double temp = 0;
+    csm_f64 temp = 0;
     int err = 0;
 
     (void) m;
@@ -276,9 +251,7 @@ _unwind_0:
     return err;
 }
 
-
-static int
-dsrl_ete_(ete* out, module* m, wstream* ws)
+static int dsrl_ete_(ete *out, module *m, wstream *ws)
 {
     int err = 0;
 
@@ -295,9 +268,7 @@ _unwind_0:
     return err;
 }
 
-
-static void
-deinit_method_(method* dead)
+static void deinit_method_(method *dead)
 {
     if (dead == NULL) { return; }
     if (dead->insbytec != 0) { csm_free(dead->insbytes); }
@@ -305,42 +276,29 @@ deinit_method_(method* dead)
     return;
 }
 
+static void deinit_object_(object *dead) { (void) dead; return; }
 
-static void
-deinit_object_(object* dead) { (void) dead; return; }
-
-
-
-static void
-deinit_string_(string* dead)
+static void deinit_string_(string *dead)
 {
     if (dead == NULL) { return; }
     if (dead->length) { csm_free(dead->data); }
     return;
 }
 
+static void deinit_int64_(csm_i64 *dead) { (void) dead; return; }
 
-static void
-deinit_int64_(int64_t* dead) { (void) dead; return; }
+static void deinit_flt64_(csm_f64 *dead) { (void) dead; return; }
 
+static void deinit_ete_(ete *dead) { (void) dead; return; }
 
-static void
-deinit_flt64_(double* dead) { (void) dead; return; }
-
-
-static void
-deinit_ete_(ete* dead) { (void) dead; return; }
-
-
-static int
-check_magic_(wstream* ws)
+static int check_magic_(wstream *ws)
 {
-    static const char* csm_magic = "csmx";
+    static const char *csm_magic = "csmx";
     size_t i = 0;
     int err = 0;
 
     for (i = 0; i < strlen(csm_magic); i++) {
-        int8_t c = 0;
+        csm_i8 c = 0;
 
         CSM_CHECKED_WREAD_I8(c, ws, err, _unwind_0);
         
@@ -355,12 +313,10 @@ _unwind_0:
     return err;
 }
 
-
-int
-csm_bc_module_init(struct csm_bc_module* m, void* buf, size_t size)
+int csm_bc_module_init(csm_bc_module *m, void *buf, size_t size)
 {
-    struct csm_wstream* ws;
-    struct csm_wstream wstream;
+    csm_wstream *ws = NULL;
+    csm_wstream wstream;
     int err = 0;
 
     if (size == 0) { return CSM_ERR_EOS; }
@@ -401,9 +357,7 @@ _unwind_0:
     return err;
 }
 
-
-int
-csm_bc_module_init_file(struct csm_bc_module* m, const char* name)
+int csm_bc_module_init_file(csm_bc_module *m, const char *name)
 {
     (void) m;
     (void) name;
@@ -412,9 +366,8 @@ csm_bc_module_init_file(struct csm_bc_module* m, const char* name)
     return 0;
 }
 
-
 /* TODO: Add support for intern64/monostream, when we do that. */
-void csm_bc_module_deinit(struct csm_bc_module* m)
+void csm_bc_module_deinit(csm_bc_module *m)
 {
     /* TODO: Do we free buffer here? */
     (void) m->buf;
@@ -424,5 +377,7 @@ void csm_bc_module_deinit(struct csm_bc_module* m)
     CSM_DSRL_BLOCK_UNWIND(string, m->strs, m->strc);
     CSM_DSRL_BLOCK_UNWIND(int64, m->int64s, m->int64c);
     CSM_DSRL_BLOCK_UNWIND(flt64, m->flt64s, m->flt64c);
+
+    return;
 }
 

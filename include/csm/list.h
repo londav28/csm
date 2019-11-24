@@ -1,30 +1,19 @@
-#ifndef CSM_LIST_H_
-#define CSM_LIST_H_
+#ifndef CSM_INCLUDE_CSM_LIST_H_
+#define CSM_INCLUDE_CSM_LIST_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include <stddef.h>
-#include <stdint.h>
+#include "csm/types.h"
 
+typedef struct csm_list {
 
-struct csm_list;
+    int dummy;
 
-
-struct csm_list *
-csm_list_create(void);
-
-
-void
-csm_list_destroy(struct csm_list *list);
-
-
-
-
+} csm_list;
 
 #ifdef __cplusplus
 }
 #endif
-
 #endif

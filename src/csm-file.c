@@ -1,10 +1,11 @@
 #include "csm/file.h"
+#include "csm/types.h"
 #include <stdio.h>
 
 /* Slow, but portable I suppose. Using SEEK_END is not portable. */
-int csm_file_size(size_t* out, const char* name) {
+int csm_file_size(size_t *out, const char *name) {
     size_t result = 0;
-    FILE* fp = NULL;
+    FILE *fp = NULL;
 
     fp = fopen(name, "rb");
 
@@ -21,10 +22,9 @@ int csm_file_size(size_t* out, const char* name) {
     return 0;
 }
 
-
-int csm_file_read(const char* name, void* buf, size_t size)
+int csm_file_read(const char *name, void *buf, size_t size)
 {
-    FILE* fp = NULL;
+    FILE *fp = NULL;
     size_t bytes = 0;
 
     fp = fopen(name, "rb");
@@ -42,10 +42,9 @@ int csm_file_read(const char* name, void* buf, size_t size)
     return 0;
 }
 
-
-int csm_file_write(const char* name, void* buf, size_t size)
+int csm_file_write(const char *name, void *buf, size_t size)
 {
-    FILE* fp = NULL;
+    FILE *fp = NULL;
     size_t bytes = 0;
 
     fp = fopen(name, "wb");
@@ -62,3 +61,4 @@ int csm_file_write(const char* name, void* buf, size_t size)
 
     return 0;
 }
+
