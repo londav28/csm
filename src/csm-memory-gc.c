@@ -5,39 +5,35 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-
 /* May add more status flags later. */
 #define CSM_GC_STATUS_MARKED    0b0000000000000001
 #define CSM_GC_STATUS_PINNED    0b0000000000000010
 #define CSM_GC_STATUS_STRING    0b0000000000000100
 #define CSM_GC_STATUS_NINDEX    0b0000000000001000
 
-
 #define CSM_ALIGN_PTR(amount, by) (amount + (amount % by))
 #define CSM_ALIGN_PTR_8(amount) CSM_ALIGN_PTR(amount, 8)
 #define CSM_ALIGN_PTR_16(amount) CSM_ALIGN_PTR(amount, 16)
 #define CSM_ALIGH_PTR_32(amount) CSM_ALIGN_PTR(amount, 32)
 
+typedef struct csm_traced_header {
 
-struct csm_traced_header {
+    csm_gc_header hdr;
+    /* TODO: Embed the mark into the last bit of the link pointer. */
+    csm_u8 mark;
+    csm_traced_header *next;
+    csm_u64 size;
 
-    struct csm_gc_header hdr;
-    uint8_t mark;
-    struct csm_traced_header* next;
-    uint64_t size;
-
-};
-
+} csm_traced_header;
 
 /* Intrusive list of traced allocations. */
-static struct csm_traced_header* traced_start;
-uint64_t traced_count;
-uint64_t traced_bytes;
-
+static csm_traced_header *traced_start = NULL;
+csm_u64 traced_count = 0;
+csm_u64 traced_bytes = 0;
 
 void csm_gc_stats(void)
 {
-    struct csm_traced_header* traced;
+    csm_traced_header *traced;
 
     /* TODO: Non portable format specifier usage here. */
     printf(
@@ -53,28 +49,26 @@ void csm_gc_stats(void)
         traced = traced->next;
     }
 
+    return;
 }
 
-
-void csm_gc_config_default(struct csm_gc_config* out)
+void csm_gc_config_default(csm_gc_config *out)
 {
     (void) out;
     return;
 }
 
-
-void csm_gc_profile(struct csm_gc_profile* out)
+void csm_gc_profile(csm_gc_profile *out)
 {
     (void) out;
     return;
 }
 
-
-void* csm_gc_alloc(struct csm_gc_header hdr, struct csm_thread* t)
+void *csm_gc_alloc(csm_gc_header hdr, csm_thread *t)
 {
     size_t realsize = 0;
-    struct csm_traced_header* header = NULL;
-    void* result = NULL;
+    csm_traced_header *header = NULL;
+    void *result = NULL;
 
     /* TODO: Thread is used when we add callbacks! */
     (void) t;
