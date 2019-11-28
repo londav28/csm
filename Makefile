@@ -106,6 +106,7 @@ $(U_BIN): $(BIN_DIR)/$(U_PREFIX)-% : $(U_SRC_DIR)/%.$(EXT)
 
 .PHONY: test
 test: $(TEST_SRC)
+	@mkdir -p $(TEST_DUMP)
 	@echo "-- Building VM test files..."
 	python3 $(CHASM_HOME)/chasm.py $(TEST_SRC) -or:$(TEST_DUMP)
 	@echo "DONE!"
