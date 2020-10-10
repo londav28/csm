@@ -23,7 +23,7 @@ $limlocal = 3;
     par_q;
     stl 2;
 
-@loop:
+@loop;
 
     # while (i < 20) { ... }
     
@@ -55,7 +55,7 @@ $limlocal = 3;
 
     jmp loop;
 
-@end:
+@end;
 
     # print(array);
 
@@ -99,7 +99,7 @@ $limlocal = 5;
     
     jmp_eqz end;
 
-@loop:
+@loop;
 
     ldl 0;
     alen;
@@ -135,7 +135,7 @@ $limlocal = 5;
     lai;
     call csm_io_print_q;
 
-@end:
+@end;
 
     ldsc "]";
     call csm_io_print_strconst;

@@ -73,6 +73,16 @@ static struct csm_native_method nm__mem_gc_stats = {
     .handler            = NULL
 };
 
+static struct csm_native_method nm__mem_malloc_stats = {
+    .name               = "csm_mem_malloc_stats",
+    .parameter_count    = 0,
+    .parameter_str      = NULL,
+    .is_void            = CSM_TRUE,
+    .rtype_str          = NULL,
+    .throws_exception   = CSM_FALSE,
+    .handler            = NULL
+};
+
 /* Sadly we can't avoid this! Invoke sometime during setup. */
 void csm_native_mem_setup(void)
 {
@@ -83,6 +93,7 @@ void csm_native_mem_setup(void)
     nm__mem_gc_disable.handler = csm_native_mem_gc_disable;
     nm__mem_gc_enable.handler = csm_native_mem_gc_enable;
     nm__mem_gc_stats.handler = csm_native_mem_gc_stats;
+    nm__mem_malloc_stats.handler = csm_native_mem_malloc_stats;
 
     return;
 }
@@ -101,6 +112,7 @@ struct csm_native_method *csm_native_mem_methods[] = {
     &nm__mem_gc_disable,
     &nm__mem_gc_enable,
     &nm__mem_gc_stats,
+    &nm__mem_malloc_stats,
     NULL
 };
 

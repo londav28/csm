@@ -16,6 +16,9 @@ struct csm_bc_string;
 
 typedef struct csm_bc_module {
 
+    int is_loaded_from_file;
+    const char* origin;
+
     /* Does module own buffer, or not? */
     csm_u64 bufsize;
     void *buf;
@@ -40,6 +43,9 @@ typedef struct csm_bc_module {
     csm_u32 flt64c;
     csm_f64 *flt64s;
 
+    int is_post;
+    const char* post_name;
+
 } csm_bc_module;
 
 /* NOTE: Abbreviation for "exception table entry". */
@@ -62,6 +68,8 @@ typedef struct csm_bc_tlabel {
 
 typedef struct csm_bc_method {
 
+    struct csm_bc_module* module;
+
     /* Individual flags are unpacked below at deserialization time. */
     csm_u8 status_0;
     csm_u8 status_1;
@@ -73,6 +81,7 @@ typedef struct csm_bc_method {
     csm_u32 name;
     csm_u32 debugsymbol;
     csm_u32 sigblock;
+    csm_u32 rtype;
     csm_u8 limstack;
     csm_u8 limlocal;
     csm_u32 insbytec;
@@ -86,10 +95,13 @@ typedef struct csm_bc_method {
     struct csm_bc_tlabel* post_params;
     struct csm_bc_tlabel post_rtype;
     csm_u32 post_insc;
+    const char* post_name;
 
 } csm_bc_method;
 
 typedef struct csm_bc_object {
+
+    struct csm_bc_module* parent;
 
     csm_u32 name;
     csm_u32 fieldblock;
@@ -98,16 +110,17 @@ typedef struct csm_bc_object {
     csm_u8 status_1;
 
     /* Computed after load. */
-    int post;
-    csm_u32 _fieldc_;
-    struct csm_bc_tlabel *_fields_;
+    int is_post;
+    csm_u32 post_fielc;
+    struct csm_bc_tlabel *post_fields;
+    csm_u64 post_size;
 
 } csm_bc_object;
 
 typedef struct csm_bc_string {
 
-    csm_u32 length;
     char* data;
+    csm_u32 length;
 
 } csm_bc_string;
 
@@ -116,6 +129,8 @@ int csm_bc_module_init_file(csm_bc_module* out, const char* name);
 int csm_bc_module_init(csm_bc_module* out, void* buf, size_t size);
 
 void csm_bc_module_deinit(csm_bc_module* m);
+
+int csm_bc_get_string(csm_bc_string* out, csm_bc_module *m, csm_u32 idx);
 
 #ifdef __cplusplus
 }

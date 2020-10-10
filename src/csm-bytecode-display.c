@@ -43,6 +43,7 @@ static void print_spaces(int amount)
     return;
 }
 
+/* TODO: Replace with calls to "csm_bc_get_string" instead. */
 static string *get_string(module *m, csm_u32 idx)
 {
     if (idx >= m->strc) { return NULL; }
@@ -206,9 +207,17 @@ static void display_method(csm_u32 *n, module *m, method *f)
     printf("-- Method is void: %d\n", f->is_void);
     printf("-- Method is zero arg: %d\n", f->is_zero_arg);
 
-    printf("-- Signature block: ");
-    display_string_constant(m, f->sigblock);
-    printf("\n");
+    if (!f->is_void) {
+        printf("-- Return type: "); 
+        display_string_constant(m, f->rtype);
+        printf("\n");
+    }
+
+    if (!f->is_zero_arg) {
+        printf("-- Signature block: ");
+        display_string_constant(m, f->sigblock);
+        printf("\n");
+    }
 
     printf("-- Stack limit: %" PRIu8 "\n", f->limstack);
     printf("-- Local limit: %" PRIu8 "\n", f->limlocal);

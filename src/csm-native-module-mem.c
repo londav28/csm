@@ -61,3 +61,10 @@ void csm_native_mem_gc_stats(csm_thread *t)
     csm_gc_stats();
     return;
 }
+
+void csm_native_mem_malloc_stats(csm_thread *t)
+{
+    (void) t;
+    csm_malloc_stats();
+    return;
+}

@@ -1,9 +1,11 @@
 #include "csm/memory/malloc.h"
 #include "csm/types.h"
 #include <stdlib.h>
+#include <assert.h>
 
 /* TODO: Remove if we no longer need debug dump? */
 #include <stdio.h>
+#include <inttypes.h>
 
 #define CSM_ALIGN(amount, by) (amount + (amount % by))
 #define CSM_ALIGN_8(amount) CSM_ALIGN(amount, 8)
@@ -19,24 +21,28 @@ typedef struct csm_untracked_header {
 
 /* Intrusive list of untracked allocations. */
 static csm_untracked_header *untracked_start = NULL;
-csm_u64 untracked_count = 0;
-csm_u64 untracked_bytes = 0;
+static csm_u64 untracked_count = 0;
+static csm_u64 untracked_bytes = 0;
+static csm_u64 untracked_high_count = 0;
+static csm_u64 untracked_high_bytes = 0;
 
 void csm_malloc_stats(void)
 {
     csm_untracked_header *untracked = NULL;
 
     /* Non portable format specifier usage here. */
-    printf(
-                "-- %lu untracked allocations (%lu bytes)\n",
-                untracked_count,
-                untracked_bytes
-    );
+    printf("High watermark = %" PRIu64 " allocations, %" PRIu64 " bytes\n",
+           untracked_high_count,
+           untracked_high_bytes);
 
     untracked = untracked_start;
 
-    while (untracked && untracked_count > 0) {
-        printf("> %p : %lu\n", (void*) untracked, untracked->size);
+    if (untracked_count > 0) {
+        assert(untracked != NULL);
+    }
+
+    while (untracked != NULL && untracked_count > 0) {
+        printf("  %p : %" PRIu64 "\n", (void*) untracked, untracked->size);
         untracked = untracked->next;
     }
 
@@ -61,6 +67,10 @@ void *csm_malloc(size_t bytes)
     untracked_count += 1;
     untracked_bytes += realsize;
 
+    /* Increment high watermark stats. */
+    untracked_high_count += 1;
+    untracked_high_bytes += realsize;
+
     /* For untracked allocations we make use of double links. */
     header->next = untracked_start;
     header->prev = NULL;
@@ -70,6 +80,7 @@ void *csm_malloc(size_t bytes)
     if (untracked_start) { untracked_start->prev = header; }
     untracked_start = header;
 
+    /* Skip past header to return address of payload. */
     result = (header + 1);
 
     return result;

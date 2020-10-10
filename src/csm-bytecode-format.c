@@ -1,5 +1,5 @@
-#include "csm/memory/malloc.h"
 #include "csm/bytecode/format.h"
+#include "csm/memory/malloc.h"
 #include "csm/errorcodes.h"
 #include "csm/wstream.h"
 #include "csm/memset.h"
@@ -137,6 +137,9 @@ static int dsrl_method_(method *out, module *m, wstream *ws)
 
     (void) m;
 
+    /* Set pointer to parent module. */
+    out->module = m;
+
     CSM_CHECKED_WREAD_U8(out->status_0, ws, err, _unwind_0);
     CSM_CHECKED_WREAD_U8(out->status_1, ws, err, _unwind_0);
 
@@ -147,6 +150,7 @@ static int dsrl_method_(method *out, module *m, wstream *ws)
     CSM_CHECKED_WREAD_U32(out->name, ws, err, _unwind_0);
     CSM_CHECKED_WREAD_U32(out->debugsymbol, ws, err, _unwind_0);
     CSM_CHECKED_WREAD_U32(out->sigblock, ws, err, _unwind_0);
+    CSM_CHECKED_WREAD_U32(out->rtype, ws, err, _unwind_0);
     CSM_CHECKED_WREAD_U8(out->limstack, ws, err, _unwind_0);
     CSM_CHECKED_WREAD_U8(out->limlocal, ws, err, _unwind_0);
     CSM_CHECKED_WREAD_U32(out->insbytec, ws, err, _unwind_0);
@@ -262,7 +266,7 @@ _unwind_0:
 
 static int dsrl_ete_(ete *out, module *m, wstream *ws)
 {
-    int err = 0;
+    int err = CSM_ERR_NONE;
 
     (void) m;
 
@@ -271,7 +275,7 @@ static int dsrl_ete_(ete *out, module *m, wstream *ws)
     CSM_CHECKED_WREAD_U32(out->end, ws, err, _unwind_0);
     CSM_CHECKED_WREAD_U32(out->target, ws, err, _unwind_0);
 
-    return 0;
+    return err;
 
 _unwind_0:
     return err;
@@ -304,7 +308,7 @@ static int check_magic_(wstream *ws)
 {
     static const char *csm_magic = "csmx";
     size_t i = 0;
-    int err = 0;
+    int err = CSM_ERR_NONE;
 
     for (i = 0; i < strlen(csm_magic); i++) {
         csm_i8 c = 0;
@@ -316,7 +320,7 @@ static int check_magic_(wstream *ws)
         }
     }
 
-    return 0;
+    return err;
 
 _unwind_0:
     return err;
@@ -326,7 +330,7 @@ int csm_bc_module_init(csm_bc_module *m, void *buf, size_t size)
 {
     csm_wstream *ws = NULL;
     csm_wstream wstream;
-    int err = 0;
+    int err = CSM_ERR_NONE;
 
     if (size == 0) { return CSM_ERR_EOS; }
 
@@ -352,7 +356,7 @@ int csm_bc_module_init(csm_bc_module *m, void *buf, size_t size)
     CSM_DSRL_BLOCK(int64, m->int64c, m->int64s, m, ws, err, _unwind_3);
     CSM_DSRL_BLOCK(flt64, m->flt64c, m->flt64s, m, ws, err, _unwind_4);
 
-    return 0;
+    return err;
 
 _unwind_4:
     CSM_DSRL_BLOCK_UNWIND(int64, m->int64s, m->int64c);
@@ -372,7 +376,7 @@ int csm_bc_module_init_file(csm_bc_module *m, const char *name)
     (void) name;
 
     assert("Not implemented yet." == 0);
-    return 0;
+    return CSM_ERR_NONE;
 }
 
 /* TODO: Add support for intern64/monostream, when we do that. */
@@ -388,5 +392,12 @@ void csm_bc_module_deinit(csm_bc_module *m)
     CSM_DSRL_BLOCK_UNWIND(flt64, m->flt64s, m->flt64c);
 
     return;
+}
+
+int csm_bc_get_string(csm_bc_string *out, csm_bc_module *m, csm_u32 idx)
+{
+    if (idx >= m->strc) { return CSM_TRUE; }
+    *out = m->strs[idx];
+    return CSM_FALSE;
 }
 

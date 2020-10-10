@@ -37,6 +37,9 @@ void csm_native_mem_gc_enable(csm_thread* t);
 /* Display GC memory allocation stats. */
 void csm_native_mem_gc_stats(csm_thread* t);
 
+/* Display untracked allocation stats. */
+void csm_native_mem_malloc_stats(csm_thread* t);
+
 #ifdef __cplusplus
 }
 #endif
