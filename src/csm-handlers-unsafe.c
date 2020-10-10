@@ -621,7 +621,7 @@ csm_unpacked_op cbridge_bc_(csm_u32 idx, csm_descriptor d, csm_thread *t)
     csm_u16 localspace = 0;
 
     /* Calculate new frame ceiling, is also saved datastack. */
-    new_frame_top = CSM_DATASTACK_POS(t) + f->_paramc_;
+    new_frame_top = CSM_DATASTACK_POS(t) + f->post_paramc;
 
     /* Save current frame's datastack pos, then move FP down. */
     CSM_CUR_FRAME(t)->saved_datastack_pos = new_frame_top;
@@ -640,7 +640,7 @@ csm_unpacked_op cbridge_bc_(csm_u32 idx, csm_descriptor d, csm_thread *t)
 
     CSM_CUR_FRAME_LOCALS(t) = new_frame_top - localspace;
 
-    for (i = 0; i < f->_paramc_; i++) {
+    for (i = 0; i < f->post_paramc; i++) {
         CSM_CUR_FRAME_LOCALS(t)[i] = CSM_DATASTACK_POP(t);
     }
 

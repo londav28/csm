@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <inttypes.h>
 #include <string.h>
+#include <assert.h>
 
 typedef csm_bc_module module;
 typedef csm_bc_method method;
@@ -175,14 +176,17 @@ static void display_instruction_stream(module *m, method *f)
 static void display_etes(module *m, method *f)
 {
     csm_u32 i = 0;
+    csm_bc_ete *ete = NULL;
 
     for (i = 0; i < f->etec; i++) {
-        csm_bc_ete *ete = f->etes + i;
+        ete = f->etes + i;
 
         printf("-- Displaying exception table entry %" PRIu32 "\n", i);
+
         printf("  > Type: ");
         display_string_constant(m, ete->type);
         putc('\n', stdout);
+
         printf("  > Start: 0x%04" PRIu32 "\n", ete->start);
         printf("  > End: 0x%04" PRIu32 "\n", ete->end);
         printf("  > Target: 0x%04" PRIu32 "\n", ete->target);
@@ -195,11 +199,13 @@ static void display_method(csm_u32 *n, module *m, method *f)
 {
     printf("-- Displaying method %" PRIu32 " --\n", *n);
 
-    printf("-- Symbol: ");
+    printf("-- Symbol (index=%" PRIu32 "): ", f->name);
     display_string_constant(m, f->name);
-    printf("\n");
+    putc('\n', stdout);
 
-    printf("-- Debug symbol number: %" PRIu32 "\n", f->debugsymbol);
+    printf("-- Method is void: %d\n", f->is_void);
+    printf("-- Method is zero arg: %d\n", f->is_zero_arg);
+    printf("-- Method is throwing: %d\n", f->is_throwing);
 
     printf("-- Signature block: ");
     display_string_constant(m, f->sigblock);
@@ -211,10 +217,18 @@ static void display_method(csm_u32 *n, module *m, method *f)
     printf("-- Instruction stream (%" PRIu32 " bytes):\n", f->insbytec);
     display_instruction_stream(m, f);
 
-    if (f->etec == 0) { return; }
+    if (f->etec == 0) {
+        return;
+    }
 
     printf("-- Exception table entries (%" PRIu32 "):\n", f->etec);
     display_etes(m, f);
+
+    if (!f->is_post) {
+        return;
+    }
+
+    printf("%s\n", "-- Post unpack information...");
 
     return;
 }
@@ -241,11 +255,10 @@ void csm_bc_display(csm_bc_module *m)
     csm_u32 i = 0;
 
     printf("-- File size is: %" PRIu64 "\n", m->bufsize);
-
     printf("-- Methods: %" PRIu32 "\n", m->methodc);
     printf("-- Objects: %" PRIu32 "\n", m->objectc);
     printf("-- Strings: %" PRIu32 "\n", m->strc);
-    printf("\n");
+    putc('\n', stdout);
 
     for (i = 0; i < m->methodc; i++) {
         display_method(&i, m, m->methods + i);
@@ -257,8 +270,7 @@ void csm_bc_display(csm_bc_module *m)
         printf("\n");
     }
 
-    printf("%s\n", "-- Displaying strings --");
-
+    printf("-- Displaying strings (count=%" PRIu32 ")\n", m->strc);
     for (i = 0; i < m->strc; i++) {
         printf("%s%" PRIu32 ": ", tb_, i);
         printf("%s", m->strs[i].data);

@@ -51,11 +51,11 @@ csm_frame *local_frame_push(csm_thread *t, method *m)
     );
 
     /* Determine if we have enough space for stack/locals/params. */
-    movesize = m->limlocal + m->limstack + m->_paramc_;
+    movesize = m->limlocal + m->limstack + m->post_paramc;
     BUFFER_CHECK(t->datastack_bot, t->datastack_pos, movesize);
 
     /* Make space for the local portion of the frame. */
-    movesize = m->limlocal + m->_paramc_;
+    movesize = m->limlocal + m->post_paramc;
     BUFFER_MOVE_CHECK(t->datastack_bot, t->datastack_pos, movesize);
     result->local_start = t->datastack_pos;
 

@@ -104,6 +104,10 @@
         }                                                                   \
     } while (0)
 
+/* Masks for status bits. */
+#define MASK_METHOD_IS_VOID         0x80
+#define MASK_METHOD_IS_ZERO_ARG     0x40
+
 /* Internal typedefs used for convenience. */
 typedef csm_bc_module module;
 typedef csm_bc_method method;
@@ -135,6 +139,11 @@ static int dsrl_method_(method *out, module *m, wstream *ws)
 
     CSM_CHECKED_WREAD_U8(out->status_0, ws, err, _unwind_0);
     CSM_CHECKED_WREAD_U8(out->status_1, ws, err, _unwind_0);
+
+    /* Unpack status bits. */
+    out->is_void = !!(out->status_0 & MASK_METHOD_IS_VOID);
+    out->is_zero_arg = !!(out->status_0 & MASK_METHOD_IS_ZERO_ARG);
+
     CSM_CHECKED_WREAD_U32(out->name, ws, err, _unwind_0);
     CSM_CHECKED_WREAD_U32(out->debugsymbol, ws, err, _unwind_0);
     CSM_CHECKED_WREAD_U32(out->sigblock, ws, err, _unwind_0);
@@ -159,6 +168,9 @@ static int dsrl_method_(method *out, module *m, wstream *ws)
     }
 
     CSM_DSRL_BLOCK(ete, out->etec, out->etes, m, ws, err, _unwind_1);
+
+    /* Blindly trust the exception table entry count for this. */
+    out->is_throwing = (out->etec != 0);
 
     return 0;
 

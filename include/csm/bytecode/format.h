@@ -52,6 +52,7 @@ typedef struct csm_bc_ete {
 
 } csm_bc_ete;
 
+/* TODO: Might move this somewhere else, not sure. */
 typedef struct csm_bc_tlabel {
 
     csm_u8 type;
@@ -61,29 +62,31 @@ typedef struct csm_bc_tlabel {
 
 typedef struct csm_bc_method {
 
-    /* Computed at deserialization. */
+    /* Individual flags are unpacked below at deserialization time. */
     csm_u8 status_0;
     csm_u8 status_1;
+
+    /* Can be computed before post. */
+    int is_void;
+    int is_zero_arg;
+    int is_throwing;
 
     csm_u32 name;
     csm_u32 debugsymbol;
     csm_u32 sigblock;
-
     csm_u8 limstack;
     csm_u8 limlocal;
-
     csm_u32 insbytec;
     csm_u8* insbytes;
-
     csm_u32 etec;
     csm_bc_ete* etes;
 
     /* Computed after load. */
-    int post;
-    csm_u32 _paramc_;
-    struct csm_bc_tlabel* _params_;
-    struct csm_bc_tlabel _rtype_;
-    csm_u32 _insc_;
+    int is_post;
+    csm_u32 post_paramc;
+    struct csm_bc_tlabel* post_params;
+    struct csm_bc_tlabel post_rtype;
+    csm_u32 post_insc;
 
 } csm_bc_method;
 
