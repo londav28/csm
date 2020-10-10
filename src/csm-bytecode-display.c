@@ -225,18 +225,18 @@ static void display_method(csm_u32 *n, module *m, method *f)
     printf("-- Instruction stream (%" PRIu32 " bytes):\n", f->insbytec);
     display_instruction_stream(m, f);
 
-    if (f->etec == 0) {
-        return;
+    if (f->etec) {
+        printf("-- Exception table entries (%" PRIu32 "):\n", f->etec);
+        display_etes(m, f);
     }
-
-    printf("-- Exception table entries (%" PRIu32 "):\n", f->etec);
-    display_etes(m, f);
 
     if (!f->is_post) {
         return;
     }
 
     printf("%s\n", "-- Post unpack information...");
+
+    printf("-- Parameter count: %" PRIu32 "\n", f->post_paramc);
 
     return;
 }

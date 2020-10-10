@@ -81,16 +81,20 @@ struct csm_unpacked_op first_op_decode(csm_frame *frame)
 /* TODO: Add separate dispatch loop to use just for traces? */
 int csm_dispatch_basic(csm_thread *t, csm_bc_method *m)
 {
-    csm_frame *frame;
+    csm_frame *frame = NULL;
     csm_unpacked_op uop;
     csm_u64 decodes = 0;
 
     frame = local_frame_push(t, m);
-    if (frame == NULL) { return CSM_ERR_STARTUP; }
+
+    if (frame == NULL) {
+        return CSM_ERR_STARTUP;
+    }
 
     uop = first_op_decode(frame);
 
     while (uop.handler != NULL) {
+
         /*
         TODO: Add flag to record execution traces, IE...
         TODO: Put this in a separate handler.
@@ -101,6 +105,7 @@ int csm_dispatch_basic(csm_thread *t, csm_bc_method *m)
             );
         }
         */
+
         t->last_op = uop.op;
         uop = uop.handler(t);
         decodes++;

@@ -17,18 +17,18 @@ $limlocal = 3;
     psh_b 2;
     stl 1;
 
-    # array = int64[20];
+    # array = int64[16];
     
-    psh_b 20;
+    psh_b 16;
     par_q;
     stl 2;
 
 @loop;
 
-    # while (i < 20) { ... }
+    # while (i < 16) { ... }
     
     ldl 0;
-    psh_b 20;
+    psh_b 16;
     cmp_q;
     jmp_gez end;
     

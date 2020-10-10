@@ -25,12 +25,18 @@ static int method_post_paramc(csm_bc_method* m) {
     /* TODO: Perhaps make defines for these? */
     struct csm_bc_string argstr;
     csm_u32 i = 0;
-    csm_u32 argcount = 0;
+    csm_u32 argcount = 1;
 
 
     /* Error if marked as zero-args and sigblock index is not zero. */
     if (m->is_zero_arg && m->sigblock) {
         return CSM_ERR_LOGICAL;
+    }
+
+    /* Nothing to do if marked as zero-args. */
+    if (m->is_zero_arg) {
+        m->post_paramc = 0;
+        return 0;
     }
 
     /* Error if invalid string index. */
@@ -40,8 +46,7 @@ static int method_post_paramc(csm_bc_method* m) {
 
     for (i = 0; i < argstr.length; i++) {
         char cursor = argstr.data[i];
-        int has_hit_ret_sep = 0;
-        int is_last_arg_sep = 0;
+        int is_last_sep = 0;
 
         /* Error if we start with an argument separator. */
         if (i == 0 && cursor == CSM_ARG_SEP_CHAR) {
@@ -49,23 +54,18 @@ static int method_post_paramc(csm_bc_method* m) {
         }
 
         /* Error if we hit two separators in a row. */
-        if (is_last_arg_sep && cursor == CSM_ARG_SEP_CHAR) {
+        if (is_last_sep && cursor == CSM_ARG_SEP_CHAR) {
             return CSM_ERR_LOGICAL;
         }
 
-        if (cursor == CSM_RET_SEP_CHAR) {
-            has_hit_ret_sep = CSM_TRUE;
+        if (is_last_sep && cursor != CSM_ARG_SEP_CHAR) {
+            is_last_sep = CSM_FALSE;
+            argcount++;
             continue;
         }
 
-        /* Error if arg separator found after return separator. */
-        if (has_hit_ret_sep && cursor == CSM_ARG_SEP_CHAR) {
-            return CSM_ERR_LOGICAL;
-        }
-
-        is_last_arg_sep = (cursor == CSM_ARG_SEP_CHAR);
-        if (is_last_arg_sep) {
-            argcount++;
+        if (cursor == CSM_ARG_SEP_CHAR) {
+            is_last_sep = CSM_TRUE;
         }
     }
 
@@ -108,8 +108,30 @@ static int method_post_name(csm_bc_method* m)
 
 int csm_bc_module_postinit(csm_bc_module* m)
 {
-    (void) m;
-    return CSM_ERR_NONE;
+    csm_bc_method *method = NULL;
+    csm_bc_object *object = NULL;
+    int err = CSM_ERR_NONE;
+    csm_u64 i = 0;
+
+    /* Loop and post-initialize methods. */
+    for (i = 0; i < m->methodc; i++) {
+        method = m->methods + i;
+        err = csm_bc_method_postinit(method);
+        if (err) {
+            return err;
+        }
+    }
+
+    /* Loop and post-initialize objects. */
+    for (i = 0; i < m->objectc; i++) {
+        object = m->objects + i;
+        err = csm_bc_object_postinit(object);
+        if (err) {
+            return err;
+        }
+    }
+
+    return err;
 }
 
 int csm_bc_method_postinit(csm_bc_method* m)
@@ -121,6 +143,9 @@ int csm_bc_method_postinit(csm_bc_method* m)
     ATTEMPT_AND_JUMP_ON_ERROR(method_post_rtype, m, err, _end);
     ATTEMPT_AND_JUMP_ON_ERROR(method_post_insc, m, err, _end);
     ATTEMPT_AND_JUMP_ON_ERROR(method_post_name, m, err, _end);
+
+    /* Set the post flag. */
+    m->is_post = 1;
 
 _end:
     return err;

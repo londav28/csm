@@ -1,4 +1,5 @@
 #include "csm/bytecode/format.h"
+#include "csm/bytecode/postinit.h"
 #include "csm/bytecode/display.h"
 #include "csm/file.h"
 #include "csm/machine/state.h"
@@ -47,10 +48,6 @@ load_bytecode(struct csm_bc_module* module, const char* name)
 
     csm_free(buffer);
 
-    /* BIG HACK SINCE WE DON'T HAVE ASSEMBLER LOCAL/STACK DIRECTIVES! */
-    module->methods[0].limlocal = 10;
-    module->methods[0].limstack = 10;
-    
     return 0;
 }
 
@@ -61,6 +58,10 @@ test_load_display_bytecode(const char* name)
     struct csm_bc_module module;
     
     if (load_bytecode(&module, name)) { return; }
+    if (csm_bc_module_postinit(&module)) {
+        printf("%s\n", "Failed to post-initialize module");
+        return;
+    }
     csm_bc_display(&module);
     csm_bc_module_deinit(&module);
 }
