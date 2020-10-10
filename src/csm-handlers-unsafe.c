@@ -314,8 +314,8 @@ static csm_unpacked_op op_lai(csm_thread *t)
     csm_cell val;
     csm_i64 idx = 0;
 
-    hdr = CSM_DATASTACK_POP(t).as.raw;
     idx = CSM_DATASTACK_POP(t).as.i64;
+    hdr = CSM_DATASTACK_POP(t).as.raw;
 
     /* TODO: Throw an exception (or exception handler) instead. */
     if (idx < 0 || idx >= hdr->length) {
@@ -361,9 +361,9 @@ static csm_unpacked_op op_sai(csm_thread *t)
     csm_cell val;
     csm_i64 idx = 0;
 
-    hdr = CSM_DATASTACK_POP(t).as.raw;
-    idx = CSM_DATASTACK_POP(t).as.i64;
     val = CSM_DATASTACK_POP(t);
+    idx = CSM_DATASTACK_POP(t).as.i64;
+    hdr = CSM_DATASTACK_POP(t).as.raw;
 
     /* TODO: Throw an exception (or exception handler) instead. */
     if (idx < 0 || idx >= hdr->length) {

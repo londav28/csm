@@ -21,16 +21,11 @@ $limlocal = 1;
     add_q;
     stl 0;
     ldsc "Hello world!";
-    call csm_io_print_strconst;
+    call csm:io_print_strconst;
     call echo_endl;
     jmp loop;
 
 @end;
-
-    ldsc "Displaying GC stats following execution:";
-    call csm_io_print_strconst;
-    call echo_endl;
-    call csm_mem_gc_stats;
 
     leave;
 }
@@ -41,7 +36,7 @@ $limstack = 1;
 $limlocal = 0;
 
     psh_b 10;
-    call csm_io_print_b_ascii;
+    call csm:io_print_b_ascii;
     leave;
 }
 

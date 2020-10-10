@@ -6,7 +6,7 @@
 #include <stdio.h>
 
 static csm_native_method nm__io_flush = {
-    .name               = "csm_io_flush",
+    .name               = "csm:io_flush",
     .parameter_count    = 0,
     .parameter_str      = NULL,
     .is_void            = CSM_TRUE,
@@ -16,7 +16,7 @@ static csm_native_method nm__io_flush = {
 };
 
 static csm_native_method nm__io_print_strconst = {
-    .name               = "csm_io_print_strconst",
+    .name               = "csm:io_print_strconst",
     .parameter_count    = 1,
     .parameter_str      = "X",
     .is_void            = CSM_TRUE,
@@ -26,7 +26,7 @@ static csm_native_method nm__io_print_strconst = {
 };
 
 static csm_native_method nm__io_print_b = {
-    .name               = "csm_io_print_b",
+    .name               = "csm:io_print_b",
     .parameter_count    = 1,
     .parameter_str      = "B",
     .is_void            = CSM_TRUE,
@@ -36,7 +36,7 @@ static csm_native_method nm__io_print_b = {
 };
 
 static csm_native_method nm__io_print_s = {
-    .name               = "csm_io_print_s",
+    .name               = "csm:io_print_s",
     .parameter_count    = 1,
     .parameter_str      = "S",
     .is_void            = CSM_TRUE,
@@ -46,7 +46,7 @@ static csm_native_method nm__io_print_s = {
 };
 
 static csm_native_method nm__io_print_d = {
-    .name               = "csm_io_print_d",
+    .name               = "csm:io_print_d",
     .parameter_count    = 1,
     .parameter_str      = "D",
     .is_void            = CSM_TRUE,
@@ -56,7 +56,7 @@ static csm_native_method nm__io_print_d = {
 };
 
 static csm_native_method nm__io_print_q = {
-    .name               = "csm_io_print_q",
+    .name               = "csm:io_print_q",
     .parameter_count    = 1,
     .parameter_str      = "Q",
     .is_void            = CSM_TRUE,
@@ -66,7 +66,7 @@ static csm_native_method nm__io_print_q = {
 };
 
 static csm_native_method nm__io_print_f = {
-    .name               = "csm_io_print_f",
+    .name               = "csm:io_print_f",
     .parameter_count    = 1,
     .parameter_str      = "F",
     .is_void            = CSM_TRUE,
@@ -76,7 +76,7 @@ static csm_native_method nm__io_print_f = {
 };
 
 static csm_native_method nm__io_print_a = {
-    .name               = "csm_io_print_a",
+    .name               = "csm:io_print_a",
     .parameter_count    = 1,
     .parameter_str      = "A",
     .is_void            = CSM_TRUE,
@@ -86,7 +86,7 @@ static csm_native_method nm__io_print_a = {
 };
 
 static csm_native_method nm__io_print_b_ascii = {
-    .name               = "csm_io_print_b_ascii",
+    .name               = "csm:io_print_b_ascii",
     .parameter_count    = 1,
     .parameter_str      = "B",
     .is_void            = CSM_TRUE,
@@ -96,7 +96,7 @@ static csm_native_method nm__io_print_b_ascii = {
 };
 
 static csm_native_method nm__io_print_d_utf8 = {
-    .name               = "csm_io_print_d_utf8",
+    .name               = "csm:io_print_d_utf8",
     .parameter_count    = 1,
     .parameter_str      = "D",
     .is_void            = CSM_TRUE,
@@ -106,7 +106,7 @@ static csm_native_method nm__io_print_d_utf8 = {
 };
 
 static csm_native_method nm__io_print_arr_b_ascii = {
-    .name               = "csm_io_print_arr_b_ascii",
+    .name               = "csm:io_print_arr_b_ascii",
     .parameter_count    = 1,
     .parameter_str      = "*B",
     .is_void            = CSM_TRUE,
@@ -116,7 +116,7 @@ static csm_native_method nm__io_print_arr_b_ascii = {
 };
 
 static csm_native_method nm__io_print_arr_b_utf8 = {
-    .name               = "csm_io_print_arr_b_utf8",
+    .name               = "csm:io_print_arr_b_utf8",
     .parameter_count    = 1,
     .parameter_str      = "*B",
     .is_void            = CSM_TRUE,

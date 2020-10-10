@@ -7,7 +7,7 @@ method start<> void {
 $limstack = 0;
 $limlocal = 0;
 
-    call __no_such_native_method;
+    call csm:no_such_native_method;
     leave;
     
 }

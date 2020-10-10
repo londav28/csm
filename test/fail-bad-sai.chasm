@@ -11,8 +11,8 @@ $limlocal = 1;
     par_q;
     stl 0;
 
-    psh_b 21;
     ldl 0;
+    psh_b 21;
     lai;
 
     leave;

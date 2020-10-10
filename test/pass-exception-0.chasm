@@ -17,10 +17,11 @@ try {
    throw;
 } except HelloException {
     ldsc "Hello world from exception handler!";
-    call csm_io_print_strconst;
+    call csm:io_print_strconst;
     psh_b 10;
-    call csm_io_print_b_ascii;
+    call csm:io_print_b_ascii;
 }
 
     leave;
 }
+

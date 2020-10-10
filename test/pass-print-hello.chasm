@@ -8,6 +8,6 @@ $limstack = 1;
 $limlocal = 0;
     
     ldsc "Hello world!";
-    call csm_io_print_strconst;
+    call csm:io_print_strconst;
     leave;
 }

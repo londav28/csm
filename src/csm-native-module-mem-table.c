@@ -4,7 +4,7 @@
 #include "csm/types.h"
 
 static struct csm_native_method nm__mem_gc_minimize = {
-    .name               = "csm_mem_gc_minimize",
+    .name               = "csm:mem_gc_minimize",
     .parameter_count    = 0,
     .parameter_str      = NULL,
     .is_void            = CSM_TRUE,
@@ -14,7 +14,7 @@ static struct csm_native_method nm__mem_gc_minimize = {
 };
 
 static struct csm_native_method nm__mem_gc_collect = {
-    .name               = "csm_mem_gc_collect",
+    .name               = "csm:mem_gc_collect",
     .parameter_count    = 0,
     .parameter_str      = NULL,
     .is_void            = CSM_TRUE,
@@ -24,7 +24,7 @@ static struct csm_native_method nm__mem_gc_collect = {
 };
 
 static struct csm_native_method nm__mem_gc_pin_on = {
-    .name               = "csm_mem_gc_pin_on",
+    .name               = "csm:mem_gc_pin_on",
     .parameter_count    = 1,
     .parameter_str      = "A",
     .is_void            = CSM_TRUE,
@@ -34,7 +34,7 @@ static struct csm_native_method nm__mem_gc_pin_on = {
 };
 
 static struct csm_native_method nm__mem_gc_pin_off = {
-    .name               = "csm_mem_gc_pin_off",
+    .name               = "csm:mem_gc_pin_off",
     .parameter_count    = 1,
     .parameter_str      = "A",
     .is_void            = CSM_TRUE,
@@ -44,7 +44,7 @@ static struct csm_native_method nm__mem_gc_pin_off = {
 };
 
 static struct csm_native_method nm__mem_gc_disable = {
-    .name               = "csm_mem_gc_disable",
+    .name               = "csm:mem_gc_disable",
     .parameter_count    = 0,
     .parameter_str      = NULL,
     .is_void            = CSM_TRUE,
@@ -54,7 +54,7 @@ static struct csm_native_method nm__mem_gc_disable = {
 };
 
 static struct csm_native_method nm__mem_gc_enable = {
-    .name               = "csm_mem_gc_enable",
+    .name               = "csm:mem_gc_enable",
     .parameter_count    = 0,
     .parameter_str      = NULL,
     .is_void            = CSM_TRUE,
@@ -64,7 +64,7 @@ static struct csm_native_method nm__mem_gc_enable = {
 };
 
 static struct csm_native_method nm__mem_gc_stats = {
-    .name               = "csm_mem_gc_stats",
+    .name               = "csm:mem_gc_stats",
     .parameter_count    = 0,
     .parameter_str      = NULL,
     .is_void            = CSM_TRUE,
@@ -74,7 +74,7 @@ static struct csm_native_method nm__mem_gc_stats = {
 };
 
 static struct csm_native_method nm__mem_malloc_stats = {
-    .name               = "csm_mem_malloc_stats",
+    .name               = "csm:mem_malloc_stats",
     .parameter_count    = 0,
     .parameter_str      = NULL,
     .is_void            = CSM_TRUE,

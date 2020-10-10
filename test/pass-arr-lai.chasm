@@ -7,13 +7,18 @@ method start<> void {
 $limstack = 10;
 $limlocal = 10;
 
-    psh_b 10;
+    psh_b 1;
     par_q;
+    dup;
     alen;
-    call csm_io_print_q;
-
+    call csm:io_print_q;
     psh_b 10;
-    call csm_io_print_b_ascii;
+    call csm:io_print_b_ascii;
+    psh_b 0;
+    lai;
+    call csm:io_print_q;
+    psh_b 10;
+    call csm:io_print_b_ascii;
 
     leave;
 }

@@ -1,5 +1,5 @@
 #
-# Compute the first 20 powers of 2.
+# Compute the first 16 powers of 2.
 #
 
 method start<> void {
@@ -25,18 +25,19 @@ $limlocal = 3;
 
 @loop;
 
-    # while (i < 16) { ... }
+    # while (i < array.length) { ... }
     
-    ldl 0;
-    psh_b 16;
-    cmp_q;
-    jmp_gez end;
-    
-    # array[i] = power;
-
-    ldl 1;  # Push value, then index, then array.
     ldl 0;
     ldl 2;
+    alen;
+    cmp_q;
+    jmp_gez end;
+   
+    # array[i] = power;
+
+    ldl 2;
+    ldl 0;
+    ldl 1;
     sai;
 
     # power = power * 2;
@@ -70,12 +71,12 @@ $limstack = 10;
 $limlocal = 10;
 
     ldsc "Array length is: ";
-    call csm_io_print_strconst;
+    call csm:io_print_strconst;
     ldl 0;
     alen;
-    call csm_io_print_q;
+    call csm:io_print_q;
     psh_b 10;
-    call csm_io_print_b_ascii;
+    call csm:io_print_b_ascii;
     leave;
 }
 
@@ -91,9 +92,10 @@ $limlocal = 5;
     call echo_arr_len;
 
     ldsc "[";
-    call csm_io_print_strconst;
+    call csm:io_print_strconst;
 
     # if (len(array) == 0) goto end;
+
     ldl 0;
     alen;
     
@@ -101,23 +103,27 @@ $limlocal = 5;
 
 @loop;
 
+    # if (counter >= (len(array) - 1) goto end;
+
+    ldl 1;
     ldl 0;
     alen;
     psh_b 1;
     sub_q;
+    cmp_q;
+    jmp_gez end;
 
-    ldl 1;
-    sub_q;
+    # print(array[i]);
 
-    # if ((len(array) - 1) - counter <= 0) goto end;
-    jmp_lez end;
-
-    ldl 1;
     ldl 0;
+    ldl 1;
     lai;
-    call csm_io_print_q;
+    call csm:io_print_q;
+
+    # print(", ");
+
     ldsc ", ";
-    call csm_io_print_strconst;
+    call csm:io_print_strconst;
 
     # counter += 1;
     ldl 1;
@@ -127,21 +133,23 @@ $limlocal = 5;
 
     jmp loop; 
 
+@end;
+
+    # print(array[array.length - 1]);
+
     ldl 0;
     dup;
     alen;
     psh_b 1;
     sub_q;
     lai;
-    call csm_io_print_q;
-
-@end;
+    call csm:io_print_q;
 
     ldsc "]";
-    call csm_io_print_strconst;
+    call csm:io_print_strconst;
 
     psh_b 10;
-    call csm_io_print_b_ascii;
+    call csm:io_print_b_ascii;
    
     leave;
 }

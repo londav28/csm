@@ -11,7 +11,7 @@ $limlocal = 0;
     psh_d 32;
     dup;
     call add2;
-    call csm_io_print_d;
+    call csm:io_print_d;
     leave;
 
 }
@@ -26,3 +26,4 @@ $limlocal = 2;
     add_q;
     ret;
 }
+
