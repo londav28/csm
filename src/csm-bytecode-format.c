@@ -169,9 +169,6 @@ static int dsrl_method_(method *out, module *m, wstream *ws)
 
     CSM_DSRL_BLOCK(ete, out->etec, out->etes, m, ws, err, _unwind_1);
 
-    /* Blindly trust the exception table entry count for this. */
-    out->is_throwing = (out->etec != 0);
-
     return 0;
 
 _unwind_1:

@@ -69,7 +69,6 @@ typedef struct csm_bc_method {
     /* Can be computed before post. */
     int is_void;
     int is_zero_arg;
-    int is_throwing;
 
     csm_u32 name;
     csm_u32 debugsymbol;

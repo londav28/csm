@@ -12,10 +12,7 @@ $limstack = 10;
 $limlocal = 10;
 
     psh_a HelloException;
-    dup;
-    psh_b 0;
-    sfd 0;
-    
+
 try {
    throw;
 } except HelloException {

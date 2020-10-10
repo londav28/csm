@@ -134,7 +134,7 @@ csm_u8 csm_op_imd_width_table[] = {
     CSM_OP_IMD_WIDTH_0,     /* ret      */
     CSM_OP_IMD_WIDTH_0,     /* leave    */
     CSM_OP_IMD_WIDTH_0,     /* break    */
-    CSM_OP_IMD_WIDTH_4      /* throw    */
+    CSM_OP_IMD_WIDTH_0      /* throw    */
 
 };
 

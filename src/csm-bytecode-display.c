@@ -187,9 +187,9 @@ static void display_etes(module *m, method *f)
         display_string_constant(m, ete->type);
         putc('\n', stdout);
 
-        printf("  > Start: 0x%04" PRIu32 "\n", ete->start);
-        printf("  > End: 0x%04" PRIu32 "\n", ete->end);
-        printf("  > Target: 0x%04" PRIu32 "\n", ete->target);
+        printf("  > Start: 0x%04" PRIx32 "\n", ete->start);
+        printf("  > End: 0x%04" PRIx32 "\n", ete->end);
+        printf("  > Target: 0x%04" PRIx32 "\n", ete->target);
     }
 
     return;
@@ -205,7 +205,6 @@ static void display_method(csm_u32 *n, module *m, method *f)
 
     printf("-- Method is void: %d\n", f->is_void);
     printf("-- Method is zero arg: %d\n", f->is_zero_arg);
-    printf("-- Method is throwing: %d\n", f->is_throwing);
 
     printf("-- Signature block: ");
     display_string_constant(m, f->sigblock);
