@@ -2,6 +2,8 @@
 # Compute the first 16 powers of 2.
 #
 
+$modname = PassPrintPowers;
+
 method start<> void {
 
 $limstack = 3;

@@ -262,6 +262,10 @@ void csm_bc_display(csm_bc_module *m)
 {
     csm_u32 i = 0;
 
+    printf("-- Module name: "); 
+    display_string_constant(m, m->modname);
+    putc('\n', stdout);
+
     printf("-- File size is: %" PRIu64 "\n", m->bufsize);
     printf("-- Methods: %" PRIu32 "\n", m->methodc);
     printf("-- Objects: %" PRIu32 "\n", m->objectc);

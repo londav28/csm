@@ -3,6 +3,8 @@
 # arguments.
 #
 
+$modname = FailCallStackOverflow;
+
 method start<> void {
 
 $limstack = 0;

@@ -350,6 +350,8 @@ int csm_bc_module_init(csm_bc_module *m, void *buf, size_t size)
     CSM_CHECKED_WREAD_U8(m->status_2, ws, err, _unwind_0);
     CSM_CHECKED_WREAD_U8(m->status_3, ws, err, _unwind_0);
 
+    CSM_CHECKED_WREAD_U32(m->modname, ws, err, _unwind_0);
+
     CSM_DSRL_BLOCK(method, m->methodc, m->methods, m, ws, err, _unwind_0); 
     CSM_DSRL_BLOCK(object, m->objectc, m->objects, m, ws, err, _unwind_1);
     CSM_DSRL_BLOCK(string, m->strc, m->strs, m, ws, err, _unwind_2);

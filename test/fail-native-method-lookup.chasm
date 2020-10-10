@@ -2,6 +2,8 @@
 # Trigger a "no such method" runtime error for a native method.
 #
 
+$modname = FailNoNativeMethod;
+
 method start<> void {
 
 $limstack = 0;

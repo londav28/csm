@@ -3,6 +3,8 @@
 # the result to the terminal.
 #
 
+$modname = PassAddTwoInt;
+
 method start<> void {
 
 $limstack = 2;

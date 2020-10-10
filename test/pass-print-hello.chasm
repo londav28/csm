@@ -2,6 +2,8 @@
 # Print "Hello world!" to the console.
 #
 
+$modname = PassPrintHello;
+
 method start<> void {
 
 $limstack = 1;

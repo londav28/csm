@@ -28,6 +28,8 @@ typedef struct csm_bc_module {
     csm_u8 status_2;
     csm_u8 status_3;
 
+    csm_u32 modname;
+
     csm_u32 methodc;
     struct csm_bc_method *methods;
 

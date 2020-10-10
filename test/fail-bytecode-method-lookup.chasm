@@ -2,6 +2,8 @@
 # Trigger a "no such method" runtime error for a bytecode method.
 #
 
+$modname = FailNoBytecodeMethod;
+
 method start<> void {
 
 $limstack = 0;

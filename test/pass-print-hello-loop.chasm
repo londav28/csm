@@ -2,6 +2,8 @@
 # Print the phrase "Hello world!" to the console 10 times.
 #
 
+$modname = PassPrintHelloLoop;
+
 method start<> void {
 
 $limstack = 2;

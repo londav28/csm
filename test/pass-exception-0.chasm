@@ -2,6 +2,8 @@
 # Print a message to the console via an exception handler.
 #
 
+$modname = PassException0;
+
 object HelloException {
     D
 }

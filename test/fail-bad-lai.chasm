@@ -2,6 +2,8 @@
 # Trigger a bad array load.
 #
 
+$modname = FailBadArrayLoad;
+
 method start<> void {
 
 $limstack = 2;
