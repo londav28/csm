@@ -228,31 +228,31 @@ static csm_unpacked_op op_dup(csm_thread *t)
     CSM_DECODE_RETURN(t, hds);
 }
 
-static csm_unpacked_op op_psh_i8(csm_thread *t)
+static csm_unpacked_op op_psh_b(csm_thread *t)
 {
     CSM_PUSH_OP(i64, CSM_CUR_STREAM_I8, t);
     CSM_DECODE_RETURN(t, hds);
 }
 
-static csm_unpacked_op op_psh_i16(csm_thread *t)
+static csm_unpacked_op op_psh_s(csm_thread *t)
 {
     CSM_PUSH_OP(i64, CSM_CUR_STREAM_I16, t);
     CSM_DECODE_RETURN(t, hds);
 }
 
-static csm_unpacked_op op_psh_i32(csm_thread *t)
+static csm_unpacked_op op_psh_d(csm_thread *t)
 {
     CSM_PUSH_OP(i64, CSM_CUR_STREAM_I32, t);
     CSM_DECODE_RETURN(t, hds);
 }
 
-static csm_unpacked_op op_psh_i64(csm_thread *t)
+static csm_unpacked_op op_psh_q(csm_thread *t)
 {
     CSM_PUSH_OP(i64, CSM_CUR_STREAM_I64, t);
     CSM_DECODE_RETURN(t, hds);
 }
 
-static csm_unpacked_op op_psh_f64(csm_thread *t)
+static csm_unpacked_op op_psh_f(csm_thread *t)
 {
     CSM_PUSH_OP(f64, CSM_CUR_STREAM_F64, t);
     CSM_DECODE_RETURN(t, hds);
@@ -317,7 +317,7 @@ do_object_native(csm_u32 idx, csm_descriptor d, csm_thread *t)
 }
 
 /* TODO: Plan logic for object allocation! */
-static csm_unpacked_op op_psh_obj(csm_thread *t)
+static csm_unpacked_op op_psh_a(csm_thread *t)
 {
     csm_cell val;
     csm_descriptor d;
@@ -355,37 +355,37 @@ static csm_unpacked_op op_psh_nil(csm_thread *t)
     CSM_DECODE_RETURN(t, hds);
 }
 
-static csm_unpacked_op op_par_i8(csm_thread *t)
+static csm_unpacked_op op_par_b(csm_thread *t)
 {
     CSM_PUSH_ARRAY_OP(csm_i8, CSM_ARRAY_TYPE_I8, t);
     CSM_DECODE_RETURN(t, hds);
 }
 
-static csm_unpacked_op op_par_i16(csm_thread *t)
+static csm_unpacked_op op_par_s(csm_thread *t)
 {
     CSM_PUSH_ARRAY_OP(csm_i16, CSM_ARRAY_TYPE_I16, t);
     CSM_DECODE_RETURN(t, hds);
 }
 
-static csm_unpacked_op op_par_i32(csm_thread *t)
+static csm_unpacked_op op_par_d(csm_thread *t)
 {
     CSM_PUSH_ARRAY_OP(csm_i32, CSM_ARRAY_TYPE_I32, t);
     CSM_DECODE_RETURN(t, hds);
 }
 
-static csm_unpacked_op op_par_i64(csm_thread *t)
+static csm_unpacked_op op_par_q(csm_thread *t)
 {
     CSM_PUSH_ARRAY_OP(csm_i64, CSM_ARRAY_TYPE_I64, t);
     CSM_DECODE_RETURN(t, hds);
 }
 
-static csm_unpacked_op op_par_f64(csm_thread *t)
+static csm_unpacked_op op_par_f(csm_thread *t)
 {
     CSM_PUSH_ARRAY_OP(csm_f64, CSM_ARRAY_TYPE_F64, t);
     CSM_DECODE_RETURN(t, hds);
 }
 
-static csm_unpacked_op op_par_obj(csm_thread *t)
+static csm_unpacked_op op_par_a(csm_thread *t)
 {
     CSM_PUSH_ARRAY_OP(void*, CSM_ARRAY_TYPE_OBJ, t);
     CSM_DECODE_RETURN(t, hds);
@@ -607,25 +607,25 @@ static csm_unpacked_op op_neg_f64(csm_thread *t)
     CSM_DECODE_RETURN(t, hds);
 }
 
-static csm_unpacked_op op_cst_i64_f64(csm_thread *t)
+static csm_unpacked_op op_cst_qf(csm_thread *t)
 {
     CSM_UNARY_OP((csm_f64), f64, i64, t);
     CSM_DECODE_RETURN(t, hds);
 }
 
-static csm_unpacked_op op_cst_f64_i64(csm_thread *t)
+static csm_unpacked_op op_cst_fq(csm_thread *t)
 {
     CSM_UNARY_OP((csm_i64), i64, f64, t);
     CSM_DECODE_RETURN(t, hds);
 }
 
-static csm_unpacked_op op_cmp_i64(csm_thread *t)
+static csm_unpacked_op op_cmp_q(csm_thread *t)
 {
     CSM_THREEWAY_COMPARISON_OP(i64, t);
     CSM_DECODE_RETURN(t, hds);
 }
 
-static csm_unpacked_op op_cmp_f64(csm_thread *t)
+static csm_unpacked_op op_cmp_f(csm_thread *t)
 {
     CSM_THREEWAY_COMPARISON_OP(f64, t);
     CSM_DECODE_RETURN(t, hds);
@@ -918,19 +918,19 @@ csm_handler csm_handlers_unsafe[] = {
     op_pop,
     op_swp,
     op_dup,
-    op_psh_i8,
-    op_psh_i16,
-    op_psh_i32,
-    op_psh_i64,
-    op_psh_f64,
-    op_psh_obj,
+    op_psh_b,
+    op_psh_s,
+    op_psh_d,
+    op_psh_q,
+    op_psh_f,
+    op_psh_a,
     op_psh_nil,
-    op_par_i8,
-    op_par_i16,
-    op_par_i32,
-    op_par_i64,
-    op_par_f64,
-    op_par_obj,
+    op_par_b,
+    op_par_s,
+    op_par_d,
+    op_par_q,
+    op_par_f,
+    op_par_a,
     op_lai,
     op_sai,
     op_alen,
@@ -952,10 +952,10 @@ csm_handler csm_handlers_unsafe[] = {
     op_div_f64,
     op_mod_f64,
     op_neg_f64,
-    op_cst_i64_f64,
-    op_cst_f64_i64,
-    op_cmp_i64,
-    op_cmp_f64,
+    op_cst_qf,
+    op_cst_fq,
+    op_cmp_q,
+    op_cmp_f,
     op_refcmp,
     op_jmp_eqz,
     op_jmp_nez,
