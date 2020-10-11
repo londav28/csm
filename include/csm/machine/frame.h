@@ -15,7 +15,7 @@ extern "C" {
 #define CSM_CUR_FRAME(t) (t->callstack_pos)
 
 /* Pointer to the stream of the current stack frame. */
-#define CSM_CUR_STREAM(t) (&(CSM_CUR_FRAME(t)->stream))
+#define CSM_CUR_STREAM(t) (&t->stream)
 
 /* Pointer to the start of locals for the current stack frame. */
 #define CSM_CUR_FRAME_LOCALS(t) (CSM_CUR_FRAME(t)->local_start)

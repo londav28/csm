@@ -43,8 +43,9 @@ csm_frame *local_frame_push(csm_thread *t, method *m)
     result->owner.what = CSM_DESCRIPTOR_BC_METHOD;
     result->owner.as.bc_method = m;
 
+    /* Initialize this thread's decoder stream. */
     csm_stream_init(
-        &result->stream,
+        &t->stream,
         m->insbytes,
         m->insbytec,
         CSM_STREAM_MODE_LE
@@ -62,16 +63,16 @@ csm_frame *local_frame_push(csm_thread *t, method *m)
     return result;
 }
 
-struct csm_unpacked_op first_op_decode(csm_frame *frame)
+struct csm_unpacked_op first_op_decode(csm_thread* t)
 {
     csm_unpacked_op result;
 
-    if (csm_stream_lt(&frame->stream, 1)) {
+    if (csm_stream_lt(&t->stream, 1)) {
         /* Change this to a special error hander instead? */
         assert("Unable to decode first opcode in stream!" == 0);
     }
 
-    result.op = csm_stream_u8(&frame->stream);
+    result.op = csm_stream_u8(&t->stream);
 
     /* TODO: Parameterize handlers! */
     result.handler = csm_handlers_unsafe[result.op];
@@ -91,7 +92,7 @@ int csm_dispatch_basic(csm_thread *t, csm_bc_method *m)
         return CSM_ERR_STARTUP;
     }
 
-    uop = first_op_decode(frame);
+    uop = first_op_decode(t);
 
     while (uop.handler != NULL) {
 

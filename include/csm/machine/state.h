@@ -22,25 +22,6 @@ struct csm_machine;
 struct csm_unpacked_op;
 struct csm_cell;
 
-/* This format causes some fragmentation, we might switch later. */
-typedef struct csm_cell {
-    union {
-
-        csm_u8  u8;
-        csm_u16 u16;
-        csm_u32 u32;
-        csm_u64 u64;
-        csm_i8 i8;
-        csm_i16 i16;
-        csm_i32 i32;
-        csm_i64 i64;
-        csm_f32 f32;
-        csm_f64 f64;
-        void* raw;
-
-    } as;
-} csm_cell;
-
 typedef struct csm_thread {
 
     struct csm_cell *datastack_bot;
@@ -59,6 +40,9 @@ typedef struct csm_thread {
 
     /* Pointer to parent! */
     struct csm_machine *machine;
+
+    /* A 32-bit stream for decoding instructions. */
+    csm_stream stream;
 
 } csm_thread;
 
@@ -151,9 +135,7 @@ typedef struct csm_frame {
     struct csm_cell *saved_datastack_pos;
     struct csm_cell *local_start;
     struct csm_descriptor owner;
-
-    /* TODO: If we can use pointer reads directly, we can remove this. */
-    csm_stream stream;
+    csm_u64 ins_pos;
 
 } csm_frame;
 

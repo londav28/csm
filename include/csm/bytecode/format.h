@@ -97,6 +97,8 @@ typedef struct csm_bc_method {
     struct csm_bc_tlabel* post_params;
     struct csm_bc_tlabel post_rtype;
     csm_u32 post_insc;
+
+    /* TODO: Make this a u8 traced array. */
     const char* post_name;
 
 } csm_bc_method;
@@ -113,7 +115,7 @@ typedef struct csm_bc_object {
 
     /* Computed after load. */
     int is_post;
-    csm_u32 post_fielc;
+    csm_u32 post_fieldc;
     struct csm_bc_tlabel *post_fields;
     csm_u64 post_size;
 

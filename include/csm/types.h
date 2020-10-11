@@ -23,6 +23,23 @@ typedef int64_t     csm_i64;
 typedef float       csm_f32;
 typedef double      csm_f64;
 
+/* Used in data-stacks, collections, etc. */
+typedef struct csm_cell {
+    union {
+        csm_u8 u8;
+        csm_u16 u16;
+        csm_u32 u32;
+        csm_u64 u64;
+        csm_i8 i8;
+        csm_i16 i16;
+        csm_i32 i32;
+        csm_i64 i64;
+        csm_f32 f32;
+        csm_f64 f64;
+        void* raw;
+    } as;
+} csm_cell;
+
 #ifdef __cplusplus
 }
 #endif

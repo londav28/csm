@@ -623,11 +623,20 @@ csm_unpacked_op cbridge_bc_(csm_u32 idx, csm_descriptor d, csm_thread *t)
     /* Calculate new frame ceiling, is also saved datastack. */
     new_frame_top = CSM_DATASTACK_POS(t) + f->post_paramc;
 
-    /* Save current frame's datastack pos, then move FP down. */
+    /* Save current frame's datastack position. */
     CSM_CUR_FRAME(t)->saved_datastack_pos = new_frame_top;
+
+    /* Save current frame's instruction stream position. */
+    CSM_CUR_FRAME(t)->ins_pos = csm_stream_get_pos(CSM_CUR_STREAM(t));
+
+    /* Move frame pointer down. */
     CSM_CUR_FRAME(t)--;
 
-    /* Push the string constant index of the function name! */
+    /*
+        If we've run out of callstack space, push the offending function's
+        name and return the overflow handler. TODO: What about if we
+        run out of datastack space?
+    */
     if (CSM_CUR_FRAME(t) < t->callstack_bot) {
         csm_cell bad = {.as.u32 = idx};
         CSM_DATASTACK_PUSH(t, bad);
@@ -636,10 +645,12 @@ csm_unpacked_op cbridge_bc_(csm_u32 idx, csm_descriptor d, csm_thread *t)
 
     /* This value should not exceed 256. */
     localspace = f->limstack + f->limlocal;
-    assert(localspace <= 256);
+    assert(localspace <= 255);
 
+    /* Make space for locals on the stack. */
     CSM_CUR_FRAME_LOCALS(t) = new_frame_top - localspace;
 
+    /* Move parameters into local slots. */
     for (i = 0; i < f->post_paramc; i++) {
         CSM_CUR_FRAME_LOCALS(t)[i] = CSM_DATASTACK_POP(t);
     }
@@ -671,10 +682,14 @@ cbridge_native_(csm_u32 idx, csm_descriptor d, csm_thread *t)
 {
     csm_native_handler native;
 
-    /* TODO: Adjust this for natives? */
+    /* Move frame pointer down. TODO: Adjust this for natives? */
     CSM_CUR_FRAME(t)--;
 
-    /* Push the string constant index of the function name! */
+    /*
+        If we've run out of callstack space, push the offending function's
+        name and return the overflow handler. TODO: What about if we
+        run out of datastack space?
+    */
     if (CSM_CUR_FRAME(t) < t->callstack_bot) {
         csm_cell bad = { .as.u32 = idx };
         CSM_DATASTACK_PUSH(t, bad);
@@ -683,6 +698,7 @@ cbridge_native_(csm_u32 idx, csm_descriptor d, csm_thread *t)
 
     CSM_CUR_FRAME(t)->owner = d;
 
+    /* Fetch the native method from the descriptor. */
     native = d.as.native_method->handler;
 
     /* Execute the native method. */
@@ -724,14 +740,45 @@ static csm_unpacked_op op_call(csm_thread *t)
 
 static csm_unpacked_op pop_callstack_frame(csm_thread *t)
 {
+    csm_bc_method * f = NULL;
+    csm_descriptor d;
+
+    /* Restore the previous frame. */
     CSM_CUR_FRAME(t)++;
 
-    /* Trying out the custom handler instead, who knows? */
+    /* Fetch the descriptor for the previous frame. */
+    d = CSM_CUR_FRAME(t)->owner;
+
+    /* Calling bytecode from native methods is not possible yet. */
+    if (d.what != CSM_DESCRIPTOR_BC_METHOD) {
+        assert("Unsupported." == NULL);
+    }
+
+    /* Read method info from the descriptor. */
+    f = d.as.bc_method;
+
+    /* If we're popping the last frame, return the EOX handler. */
     if (CSM_CUR_FRAME(t) == t->callstack_top) {
         CSM_RETURN_CUSTOM(t, csm_special_eox);
     }
 
+    /* Recall the saved datastack position. */
     CSM_DATASTACK_POS(t) = CSM_CUR_FRAME(t)->saved_datastack_pos;
+
+    /* Initialize decoder stream with instruction stream. */
+    csm_stream_init(
+            CSM_CUR_STREAM(t),
+            f->insbytes,
+            f->insbytec,
+            CSM_STREAM_MODE_LE
+    );
+
+    /* Set decoder stream with saved instruction stream position. */
+    csm_stream_shift_abs(
+            CSM_CUR_STREAM(t),
+            CSM_CUR_FRAME(t)->ins_pos
+    );
+
     CSM_DECODE_RETURN(t, hds);
 }
 

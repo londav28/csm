@@ -100,6 +100,11 @@ void csm_free(void *object)
     if (header->prev) { header->prev->next = header->next; }
     if (header->next) { header->next->prev = header->prev; }
 
+    /* Relink the list head if necessary. */
+    if (untracked_start == header) {
+        untracked_start = header->next;
+    }
+
     /* TODO: Replace free with our own internal implementation. */
     free(header);
 
