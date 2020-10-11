@@ -250,9 +250,19 @@ static void display_object(csm_u32 *n, module *m, object *o)
     display_string_constant(m, o->name);
     printf("\n");
 
-    printf( "-- Field block: ");
+    printf("-- Object is zero field: %d\n", o->is_zero_field);
+
+    printf("-- Field block: ");
     display_string_constant(m, o->fieldblock);
-    printf("\n");
+    putc('\n', stdout);
+
+    if (!o->is_post) {
+        return;
+    }
+
+    printf("%s\n", "-- Post unpack information...");
+
+    printf("-- Field count: %" PRIu32 "\n", o->post_fieldc);
 
     return;
 }

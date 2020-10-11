@@ -70,7 +70,7 @@ typedef struct csm_bc_tlabel {
 
 typedef struct csm_bc_method {
 
-    struct csm_bc_module* module;
+    struct csm_bc_module* parent;
 
     /* Individual flags are unpacked below at deserialization time. */
     csm_u8 status_0;
@@ -111,13 +111,14 @@ typedef struct csm_bc_object {
     csm_u32 fieldblock;
 
     csm_u8 status_0;
-    csm_u8 status_1;
+
+    /* Can be computed before post. */
+    int is_zero_field;
 
     /* Computed after load. */
     int is_post;
     csm_u32 post_fieldc;
     struct csm_bc_tlabel *post_fields;
-    csm_u64 post_size;
 
 } csm_bc_object;
 

@@ -107,6 +107,7 @@
 /* Masks for status bits. */
 #define MASK_METHOD_IS_VOID         0x80
 #define MASK_METHOD_IS_ZERO_ARG     0x40
+#define MASK_OBJECT_IS_ZERO_FIELD   0x80
 
 /* Internal typedefs used for convenience. */
 typedef csm_bc_module module;
@@ -138,7 +139,7 @@ static int dsrl_method_(method *out, module *m, wstream *ws)
     (void) m;
 
     /* Set pointer to parent module. */
-    out->module = m;
+    out->parent= m;
 
     CSM_CHECKED_WREAD_U8(out->status_0, ws, err, _unwind_0);
     CSM_CHECKED_WREAD_U8(out->status_1, ws, err, _unwind_0);
@@ -185,9 +186,14 @@ static int dsrl_object_(object *out, module *m, wstream *ws)
 {
     int err = 0;
 
-    (void) m;
+    /* Set the parent module. */
+    out->parent = m;
 
     CSM_CHECKED_WREAD_U8(out->status_0, ws, err, _unwind_0);
+
+    /* Unpack status bits. */
+    out->is_zero_field = !!(out->status_0 & MASK_OBJECT_IS_ZERO_FIELD);
+
     CSM_CHECKED_WREAD_U32(out->name, ws, err, _unwind_0);
     CSM_CHECKED_WREAD_U32(out->fieldblock, ws, err, _unwind_0);
 
