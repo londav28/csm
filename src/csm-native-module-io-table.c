@@ -168,3 +168,9 @@ csm_native_method *csm_native_io_methods[] = {
 
 };
 
+csm_native_object *csm_native_io_objects[] = {
+
+    NULL
+
+};
+

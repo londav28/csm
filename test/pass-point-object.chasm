@@ -1,0 +1,54 @@
+#
+# Create and manipulate a point object.
+#
+
+$modname = PassPointObject;
+
+object point {
+    Q, Q
+}
+
+method start<> void {
+
+$limstack = 5;
+$limlocal = 5;
+
+    psh_a point;
+    stl 0;
+
+    ldl 0;
+    call print_point;
+
+    ldl 0;
+    psh_d 32;
+    sfd 0;
+
+    ldl 0;
+    psh_d 64;
+    sfd 1;
+
+    ldl 0;
+    call print_point;
+
+    leave;
+}
+
+method print_point<point> void {
+    ldl 0;
+    dup;
+
+    lfd 0;
+    call csm:io_print_q;
+
+    ldsc ", ";
+    call csm:io_print_strconst;
+
+    lfd 1;
+    call csm:io_print_q;
+
+    psh_b 10;
+    call csm:io_print_b_ascii;
+
+    leave;
+}
+

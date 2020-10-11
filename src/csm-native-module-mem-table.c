@@ -116,3 +116,9 @@ struct csm_native_method *csm_native_mem_methods[] = {
     NULL
 };
 
+struct csm_native_object *csm_native_mem_objects[] = {
+
+    NULL
+
+};
+

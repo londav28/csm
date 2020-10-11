@@ -123,12 +123,20 @@ typedef enum csm_array_type {
 
 typedef struct csm_array_header {
 
+    csm_descriptor what;
     csm_i64 length;
     void *data;
     int dimensions;
     int kind;
 
 } csm_array_header;
+
+typedef struct csm_object_header {
+
+    csm_descriptor what;
+    void* data;
+
+} csm_object_header;
 
 typedef struct csm_frame {
 

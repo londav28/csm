@@ -10,7 +10,6 @@ void csm_native_modules_setup(void)
     return;
 }
 
-
 void csm_native_modules_teardown(void)
 {
     csm_native_io_teardown();

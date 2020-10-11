@@ -116,6 +116,7 @@ static int object_post_fieldc(csm_bc_object *o)
     struct csm_bc_string fieldstr;
     csm_u32 i = 0;
     csm_u32 fieldcount = 1;
+    int is_last_sep = CSM_FALSE;
 
 
     /* Error if marked as zero-args and sigblock index is not zero. */
@@ -136,7 +137,6 @@ static int object_post_fieldc(csm_bc_object *o)
 
     for (i = 0; i < fieldstr.length; i++) {
         char cursor = fieldstr.data[i];
-        int is_last_sep = 0;
 
         /* Error if we start with an argument separator. */
         if (i == 0 && cursor == CSM_FIELD_SEP_CHAR) {

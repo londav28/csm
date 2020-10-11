@@ -3,7 +3,7 @@
 #include "csm/machine/frame.h"
 #include "csm/bytecode/opcodes.h"
 #include "csm/bytecode/format.h"
-#include "csm/native/interface.h"
+#include "csm/machine/bridge.h"
 #include "csm/memory/gc.h"
 #include "csm/handlers/special.h"
 #include "csm/memset.h"
@@ -72,7 +72,6 @@
         csm_i64 length = 0;                                                 \
         size_t stride = 0;                                                  \
         size_t bytes = 0;                                                   \
-        csm_gc_header hdr;                                                  \
         length = CSM_DATASTACK_POP(thread).as.i64;                          \
         if (length < 0) {                                                   \
             csm_cell bad;                                                   \
@@ -83,16 +82,15 @@
         stride = sizeof(ctype);                                             \
         /* TODO: Should align this amount later? */                         \
         bytes = (length * stride) + sizeof(*array);                         \
-        hdr.string = NULL;                                                  \
-        hdr.tag = CSM_GC_TAG_ARRAY;                                         \
-        hdr.bytes = bytes;                                                  \
-        array = csm_gc_alloc(hdr, thread);                                  \
+        array = csm_gc_alloc(CSM_GC_TAG_ARRAY, bytes, thread);              \
         if (array == NULL) {                                                \
             csm_cell bad;                                                   \
             bad.as.u64 = bytes;                                             \
             CSM_DATASTACK_PUSH(thread, bad);                                \
             CSM_RETURN_CUSTOM(thread, csm_special_memory_exhaustion);       \
         }                                                                   \
+        csm_memset(array, 0, sizeof(*array));                               \
+        /* TODO: Special set array descriptor for par_obj. */               \
         array->length = length;                                             \
         array->dimensions = 1;                                              \
         array->kind = what;                                                 \
@@ -159,27 +157,35 @@ static csm_unpacked_op op_stg(csm_thread *t)
 
 static csm_unpacked_op op_lfd(csm_thread* t)
 {
-    csm_cell *object = NULL;
+    csm_object_header *object = NULL;
+    csm_cell *cells = NULL;
     csm_cell value;
     csm_u8 idx = 0;
 
     idx = CSM_CUR_STREAM_U16(t);
     object = CSM_DATASTACK_POP(t).as.raw;
-    value = object[idx];
+    cells = object->data;
+    value = cells[idx];
+
     CSM_DATASTACK_PUSH(t, value);
+
     CSM_DECODE_RETURN(t, hds);
 }
 
 static csm_unpacked_op op_sfd(csm_thread *t)
 {
-    csm_cell *object = NULL;
+    csm_object_header *object = NULL;
+    csm_cell *cells = NULL;
     csm_cell value;
     csm_u8 idx = 0;
 
     idx = CSM_CUR_STREAM_U16(t);
     value = CSM_DATASTACK_POP(t);
     object = CSM_DATASTACK_POP(t).as.raw;
-    object[idx] = value;
+
+    cells = object->data;
+    cells[idx] = value;
+
     CSM_DECODE_RETURN(t, hds);
 }
 
@@ -252,15 +258,92 @@ static csm_unpacked_op op_psh_f64(csm_thread *t)
     CSM_DECODE_RETURN(t, hds);
 }
 
+static csm_unpacked_op
+do_object_bytecode(csm_u32 idx, csm_descriptor d, csm_thread *t)
+{
+    struct csm_bc_object *o = d.as.bc_object;
+    csm_object_header *object;
+    csm_cell v;
+    csm_u64 bytes = 0;
+
+    (void) idx;
+
+    assert(d.what == CSM_DESCRIPTOR_BC_OBJECT);
+    assert(o->is_post);
+
+    /* TODO: Overflow check for this? */
+    bytes = (sizeof(csm_cell) * o->post_fieldc) + sizeof(*object);
+
+    object = csm_gc_alloc(CSM_GC_TAG_OBJECT_BC, bytes, t);
+
+    if (object == NULL) {
+        csm_cell bad;
+        bad.as.u64 = bytes;
+        CSM_DATASTACK_PUSH(t, bad);
+        CSM_RETURN_CUSTOM(t, csm_special_memory_exhaustion);
+    }
+
+    object->what = d;
+    object->data = (object + 1);
+
+    csm_memset(object->data, 0, (sizeof(csm_cell) * o->post_fieldc));
+
+    v.as.raw = object;
+
+    CSM_DATASTACK_PUSH(t, v);
+
+    CSM_DECODE_RETURN(t, hds);
+}
+
+static csm_unpacked_op
+do_object_native(csm_u32 idx, csm_descriptor d, csm_thread *t)
+{
+    struct csm_bc_object* o = d.as.bc_object;
+    csm_u64 bytes = 0;
+    csm_u32 fieldcount = 0;
+
+    (void) idx;
+    (void) d;
+    (void) t;
+    (void) o;
+    (void) bytes;
+    (void) fieldcount;
+
+    assert(d.what == CSM_DESCRIPTOR_NATIVE_OBJECT);
+
+    assert("Not implemented yet!" == NULL);
+
+    CSM_DECODE_RETURN(t, hds);
+}
+
 /* TODO: Plan logic for object allocation! */
 static csm_unpacked_op op_psh_obj(csm_thread *t)
 {
+    csm_cell val;
+    csm_descriptor d;
     csm_u32 idx = 0;
 
     idx = CSM_CUR_STREAM_U32(t);
-    (void) idx;
 
-    CSM_DECODE_RETURN(t, hds);
+    /* TODO: Make all bridges/runtime hooks parameterized! */
+    d = csm_bridge_snail(CSM_BRIDGE_OBJECT, idx, t);
+
+    switch (d.what) {
+    case CSM_DESCRIPTOR_UNRESOLVED:
+        val.as.u32 = idx;
+        CSM_DATASTACK_PUSH(t, val);
+        CSM_RETURN_CUSTOM(t, csm_special_no_object);
+        break;
+    case CSM_DESCRIPTOR_BC_OBJECT:
+        return do_object_bytecode(idx, d, t);
+        break;
+    case CSM_DESCRIPTOR_NATIVE_OBJECT:
+        return do_object_native(idx, d, t);
+        break;
+    }
+
+    /* Should never reach here... */
+    CSM_RETURN_CUSTOM(t, csm_special_terminate_unexpected);
 }
 
 static csm_unpacked_op op_psh_nil(csm_thread *t)
@@ -609,11 +692,12 @@ static csm_unpacked_op op_jmp(csm_thread *t)
 /* TODO: Figure out object model/metadata for this. */
 static csm_unpacked_op op_typeof(csm_thread *t)
 {
+    assert("Not implemented yet!" == NULL);
     CSM_ALIGN_DECODE_RETURN(t, t->last_op, hds);
 }
 
-static
-csm_unpacked_op cbridge_bc_(csm_u32 idx, csm_descriptor d, csm_thread *t)
+static csm_unpacked_op
+do_call_bytecode(csm_u32 idx, csm_descriptor d, csm_thread *t)
 {
     csm_bc_method *f = d.as.bc_method;
     csm_cell *new_frame_top = NULL;
@@ -678,7 +762,7 @@ csm_unpacked_op cbridge_bc_(csm_u32 idx, csm_descriptor d, csm_thread *t)
 /* TODO: Way to bridge back into bytecode methods during native calls? */
 /* TODO: "local_start" / "stream" / "saved_datastack_pos" are unset? */
 static csm_unpacked_op
-cbridge_native_(csm_u32 idx, csm_descriptor d, csm_thread *t)
+do_call_native(csm_u32 idx, csm_descriptor d, csm_thread *t)
 {
     csm_native_handler native;
 
@@ -719,7 +803,7 @@ static csm_unpacked_op op_call(csm_thread *t)
     idx = CSM_CUR_STREAM_U32(t);
 
     /* TODO: Make all bridges/runtime hooks parameterized! */
-    d = csm_method_bridge_snail(idx, t);
+    d = csm_bridge_snail(CSM_BRIDGE_METHOD, idx, t);
 
     switch (d.what) {
     case CSM_DESCRIPTOR_UNRESOLVED:
@@ -728,10 +812,10 @@ static csm_unpacked_op op_call(csm_thread *t)
         CSM_RETURN_CUSTOM(t, csm_special_no_method);
         break;
     case CSM_DESCRIPTOR_BC_METHOD:
-        return cbridge_bc_(idx, d, t);
+        return do_call_bytecode(idx, d, t);
         break;
     case CSM_DESCRIPTOR_NATIVE_METHOD:
-        return cbridge_native_(idx, d, t);
+        return do_call_native(idx, d, t);
         break;
     }
 

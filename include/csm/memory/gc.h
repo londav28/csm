@@ -33,22 +33,16 @@ typedef enum csm_gc_tag {
 
     CSM_GC_TAG_OBJECT_BC = 0,
     CSM_GC_TAG_OBJECT_NATIVE,
-    CSM_GC_TAG_METHOD_BC,
-    CSM_GC_TAG_METHOD_NATIVE,
     CSM_GC_TAG_ARRAY,
     CSM_GC_TAG_UNKNOWN
 
 } csm_gc_tag;
 
 typedef struct csm_gc_header {
-
-    csm_u32 *string;
-    csm_u16 tag;
+    csm_u32 tag;
     size_t bytes;
-
 } csm_gc_header;
 
-/* Used for debugging ONLY! */
 void csm_gc_stats(void);
 
 void csm_gc_config_default(csm_gc_config *out);
@@ -59,12 +53,10 @@ void csm_gc_cleanup(void);
 
 void csm_gc_profile(csm_gc_prof *out);
 
-/* If the thread is NULL the allocation is global. */
-void *csm_gc_alloc(csm_gc_header hdr, csm_thread *t);
+void *csm_gc_alloc(csm_u8 tag, csm_u64 bytes, csm_thread *t);
 
 void csm_gc_minimize(void);
 
-/* TODO: Fine-tuned control over allocations. */
 void csm_gc_collect(void);
 
 void csm_gc_pin_on(void *object);
